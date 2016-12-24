@@ -155,7 +155,7 @@ if (~isempty(precalcSubset))
         gazeParam.gazeData = s.data.points;
         clear s;
      
-        for ic = 48:nc
+        for ic = 1:nc
             if ((jumpFrames(ic) + before >= 3) && (jumpFrames(ic) + after < videoLen) && (jumpFrames(ic) + after < length(gazeParam.gazeData)))
                 % preprocess frames
                 srcFr = xxx_preprocessFramesPartial(vr, jumpFrames(ic)+before, gbvsParam, ofParam, poseletModel); %TODO
@@ -187,7 +187,7 @@ if (~isempty(precalcSubset))
                 % features
                 options.dstGroundTruth = dstGazeMap;
                 options.dstGroundTruthPts = gazeParam.gazeData{jumpFrames(ic)+after};
-                [f, d, l, jumps] = xxx_jumpPairwiseFeatures6(srcFr, srcCands, dstFr, dstCands, options, cache);
+                [f, d, l, jumps] = xxx_jumpPairwiseFeatures6PCAmPCAsOFGBVS(srcFr, srcCands, dstFr, dstCands, options, cache);
 %                 [f, d, l, jumps] = jumpPairwiseFeatures2(srcFr, srcCands, dstFr, dstCands, options);
 %                 [f, l, jumps] = jumpPairwiseFeatures(srcFr, srcPts, dstFr, dstPts, dstType, options);
                 clear srcFr dstFr;

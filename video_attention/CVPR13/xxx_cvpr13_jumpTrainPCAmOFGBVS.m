@@ -53,7 +53,7 @@ options.useLabel = true; % true if the label of feature should be calculated
 options.distType = 'euc';
 options.gazeThreshold = 0.2; % distance to gaze within it the candidate concidered as good (Euclidian)
 options.rectSzTh = 0; % minimal size for gaze candidate
-options.featureIdx = 1:21; % cvpr13_v5_3
+options.featureIdx = 1:23; % cvpr13_v5_3
 % options.featureIdx = [1:10, 14:16, 20:22]; % cvpr13_v5_3_no_stat
 % options.featureIdx = [1, 11:22]; % cvpr13_v5_3_no_mot
 % options.featureIdx = [2:13, 17:19, 21:22]; % cvpr13_v5_3_no_sem
@@ -184,7 +184,7 @@ if (~isempty(precalcSubset))
                 % features
                 options.dstGroundTruth = dstGazeMap;
                 options.dstGroundTruthPts = gazeParam.gazeData{jumpFrames(ic)+after};
-                [f, d, l, jumps] = xxx_jumpPairwiseFeatures6(srcFr, srcCands, dstFr, dstCands, options, cache);
+                [f, d, l, jumps] = xxx_jumpPairwiseFeatures6PCAmOFGBVS(srcFr, srcCands, dstFr, dstCands, options, cache);
 %                 [f, d, l, jumps] = jumpPairwiseFeatures2(srcFr, srcCands, dstFr, dstCands, options);
 %                 [f, l, jumps] = jumpPairwiseFeatures(srcFr, srcPts, dstFr, dstPts, dstType, options);
                 clear srcFr dstFr;
