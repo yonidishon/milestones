@@ -43,8 +43,8 @@ for im = 1:nmeas
         
         p1 = predMap(:) / sum(predMap(:));
         p2 = gaze.denseMap(:) / sum(gaze.denseMap(:));
-        %sim(im) = sum((p1 - p2) .^ 2 ./ (p1 + p2+eps)) ./ 2;
-        sim(im) = sum((p1 - p2) .^ 2 ./ (p1 + p2)) ./ 2;
+        sim(im) = sum((p1 - p2) .^ 2 ./ (p1 + p2+eps)) ./ 2;
+        %sim(im) = sum((p1 - p2) .^ 2 ./ (p1 + p2)) ./ 2;
 
     elseif (strcmpi(meas{im}, 'cc')); % Linear Correlation Coefficient
         if (~isfield(gaze, 'binaryMap'))
