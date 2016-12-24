@@ -114,7 +114,7 @@ if (~isempty(precalcSubset))
     posFeatures = zeros(nv, 1);
     negFeatures = zeros(nv, 1);
     
-    for i = 6:length(calcIdx)
+    for i = 1:length(calcIdx)
         % reset features
         clear features labels;
         features = [];
@@ -155,7 +155,7 @@ if (~isempty(precalcSubset))
         gazeParam.gazeData = s.data.points;
         clear s;
      
-        for ic = 48:nc
+        for ic = 1:nc
             if ((jumpFrames(ic) + before >= 3) && (jumpFrames(ic) + after < videoLen) && (jumpFrames(ic) + after < length(gazeParam.gazeData)))
                 % preprocess frames
                 srcFr = xxx_preprocessFramesPartial(vr, jumpFrames(ic)+before, gbvsParam, ofParam, poseletModel); %TODO

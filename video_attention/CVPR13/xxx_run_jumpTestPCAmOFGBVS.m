@@ -80,7 +80,7 @@ if (~exist(visRoot, 'dir'))
 end
 
 %% test
-for i = 19:20 %TODO
+for i = 1:20 %TODO
     iv = testIdx(testSubset(i));
     fprintf('Time is:: %s, Processing %s... ',datestr(datetime('now')), videos{iv}); tic;
     
@@ -154,6 +154,9 @@ for i = 19:20 %TODO
                 predMaps(:,:,ic) = candidate2map(dstCands, [n, m], candScale);
                 cands{ic} = dstCands;
             end
+            if mod(ic,100) == 0
+                fprintf('Time is:: %s,Frame Processed: %d/%d\n',datestr(datetime('now')),ic,nc)
+            end
         end
         
         % compare
@@ -175,28 +178,25 @@ for i = 19:20 %TODO
         open(vw);
     end
     
-    try
-        for ifr = 1:length(indFr)
-            % fr = xxx_preprocessFramesPartial(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-            gazeData.index = frames(indFr(ifr));
-            [sim{i}(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
-                'self');
-            if (saveVideo && verNum >= 2012)
-                outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim{i}(:,:,ifr));
-                writeVideo(vw, outfr);
-            end
-        end
-    catch me
-        if (saveVideo && verNum >= 2012)
-            close(vw);
-        end
-        rethrow(me);
-    end
     
-    if (saveVideo && verNum >= 2012)
-        close(vw);
+    for ifr = 1:length(indFr)
+        % fr = xxx_preprocessFramesPartial(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
+        gazeData.index = frames(indFr(ifr));
+        [sim{i}(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
+            'self');
+        if (saveVideo && verNum >= 2012)
+            outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim{i}(:,:,ifr));
+            writeVideo(vw, outfr);
+        end
+        
+        if mod(ifr,100) == 0
+            fprintf('Time is:: %s,Frame Evaluated: %d/%d\n',datestr(datetime('now')),ifr,length(indFr))
+        end
     end
 
+    vid_sim = sim{i};
+    save(fullfile(visRoot, sprintf('%s_similarity.mat',videos{iv})),vid_sim);
+    clear vid_sim;
     fprintf('%f sec\n', toc);
 end
 
