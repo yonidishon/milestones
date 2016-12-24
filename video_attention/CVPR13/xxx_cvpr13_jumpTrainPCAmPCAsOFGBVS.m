@@ -114,7 +114,7 @@ if (~isempty(precalcSubset))
     posFeatures = zeros(nv, 1);
     negFeatures = zeros(nv, 1);
     
-    for i = 6:length(calcIdx)
+    for i = 1:length(calcIdx)
         % reset features
         clear features labels;
         features = [];
