@@ -193,7 +193,7 @@ for i = 1:20 %TODO
     end
     % For case of faliure during the run
     vid_sim = sim{i};
-    save(fullfile(visRoot, sprintf('%s_similarity.mat',videos{iv})),vid_sim);
+    save(fullfile(visRoot, sprintf('%s_similarity.mat',videos{iv})),'vid_sim');
     clear vid_sim;
     fprintf('%f sec\n', toc);
 end
