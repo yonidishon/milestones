@@ -2,47 +2,32 @@
 %clear all;close all;clc;
 %% settings
 % First guess:
-global gdrive
-global dropbox
+addpath(fullfile('C:\Users\ydishon\Documents\milestones\video_attention\CVPR13','xxx_my_additions'));
+settings()
 saveloc = '\\cgm47\D\Dima_Analysis_Milestones\Candidates\PrefectPredExp';
 diemDataRoot = '\\cgm47\D\DIEM';
-addpath(fullfile(pwd,'xxx_my_additions'));
-gdrive = '\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive';
-dropbox = '\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox';
-addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
-addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
-addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
-addpath(genpath(fullfile(gdrive, 'Software', 'Saliency', 'gbvs'))); % GBVS saliency
-addpath(genpath(fullfile(gdrive, 'Software', 'Saliency', 'Hou2008'))); % Houw saliency
-addpath(genpath(fullfile(gdrive,'Software','Saliency','qtfm')));%PQFT
-addpath(genpath(fullfile(dropbox,'Matlab','video_attention','compare','PQFT_2'))); % pqft
-
-addpath(genpath(fullfile(dropbox,'Software','face_detector_adobe'))); % face detector
-addpath(genpath(fullfile(dropbox,'Software','poselets','code')));% poselets
-
-addpath(genpath(fullfile(gdrive,'Software','MeanShift')));% meanShift
-addpath(genpath(fullfile(gdrive,'Software','misc')));% melliecious
 
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
 
 videoIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji;
-
+jumpType = 'all';
 candScale = 2;
 visVideo = false;
 measures = {'chisq', 'auc','nss'};
 % gaze settings
 gazeParam.pointSigma = 10;
-
+gazeRoot = fullfile(diemDataRoot, 'cache', '00_gaze');
 %% loading
 nv = length(videoIdx);
 videos = videoListLoad(diemDataRoot);
 
+uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 
 [gbvsParam, ofParam, poseletModel] = configureDetectors();
 %Extracting only directories of models that I tested on
 dataloc = '\\cgm47\d\Dima_Analysis_Milestones\ModelsFeatures\PredictionsNO_SEM';
-files=dir();
+files=dir(dataloc);
 isdirbool = cell2mat(extractfield(files,'isdir'));
 filenames = extractfield(files,'name');
 dirnames = filenames(isdirbool);
@@ -54,26 +39,28 @@ for kk=1:length(dirnames);
         iv = videoIdx(i);
         videoName = videos{iv};
         
-        fprintf('% :: Processing %s... ', datestr(datetime), videoName); tic;
+        fprintf('%s :: Processing %s ... \n', datestr(datetime('now')), videoName); tic;
         % compare
         % load jump frames
-        [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType, 50, 30, videoLen - 30);
+        vr = VideoReader(fullfile(uncVideoRoot, sprintf('%s.avi', videos{iv})));
+        videoLen =  vr.numberOfFrames;
+        [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType, 50, 30,  videoLen - 30);
         frames = jumpFrames + after;
         indFr = find(frames <= videoLen);
         % load candidates
         data = load(fullfile(dataloc,dirnames{kk},sprintf('%s.mat',videoName)));
         cands = data.cands;
         % load gaze data
-        ss = load(fullfile(cache.gazeRoot, sprintf('%s.mat', videoName)));
+        ss = load(fullfile(gazeRoot, sprintf('%s.mat', videoName)));
         gazeData = ss.data;
-        h = ss.height;
-        w = ss.width;
+        h = ss.data.height;
+        w = ss.data.width;
         clear ss;
-        predmaps = zeros(h,w,nfr);
+        predmaps = zeros(h,w,length(indFr));
         for ifr = 1:length(indFr) % all frames
             gazeData.index = frames(indFr(ifr));
             predmaps(:,:,ifr) = xxx_candGazePrefectPred(gazeData.points{gazeData.index}, cands{gazeData.index},h,w);
-            [sim{i}(:,:,ifr), ~] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
+            [sim{i}(:,:,ifr), ~] = similarityFrame3(predmaps(:,:,indFr(ifr)), gazeData, measures, ...
                 'self');
         end
         vid_sim = sim{i};
