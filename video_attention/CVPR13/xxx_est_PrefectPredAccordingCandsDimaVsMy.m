@@ -34,6 +34,9 @@ dirnames = filenames(isdirbool);
 dirnames = dirnames(~ismember(dirnames,{'.','..'}));
 for kk=1:length(dirnames);
     visRoot = fullfile(saveloc,dirnames{kk});
+    if ~exist('visRoot','dir')
+        mkdir(visRoot);
+    end
     sim = cell(nv, 1);
     for i = 1:nv % all movies
         iv = videoIdx(i);
@@ -59,12 +62,12 @@ for kk=1:length(dirnames);
         predmaps = zeros(h,w,length(indFr));
         for ifr = 1:length(indFr) % all frames
             gazeData.index = frames(indFr(ifr));
-            predmaps(:,:,ifr) = xxx_candGazePrefectPred(gazeData.points{gazeData.index}, cands{gazeData.index},h,w);
+            predmaps(:,:,ifr) = xxx_candGazePrefectPred(gazeData.points{gazeData.index}, cands{ifr},h,w);
             [sim{i}(:,:,ifr), ~] = similarityFrame3(predmaps(:,:,indFr(ifr)), gazeData, measures, ...
                 'self');
         end
         vid_sim = sim{i};
-        save(fullfile(visRoot, sprintf('%s.mat', videos{iv})), 'frames', 'indFr', 'cands', 'predMaps','vid_sim');
+        save(fullfile(visRoot, sprintf('%s.mat', videos{iv})), 'frames', 'indFr', 'cands', 'predmaps','vid_sim');
         
         
         %fprintf('%f sec\n', toc);

@@ -13,5 +13,12 @@ end
 D = pdist2(gazePts, candPts,'euclidean');
 % Now I need to count the numbers of rows in D for each column that are
 % smaller than the candRad
-cand_weight = sum(bsxfun(@ge,candRad',D));
+smlthan = bsxfun(@ge,candRad',D);
+if size(smlthan,1) > 1
+    cand_weight = sum(smlthan);
+elseif any(smlthan)
+    cand_weight = smlthan;
+else
+    cand_weight = ones(1,length(candRad));
+end
 perfect_predmap = points2GaussMap(candPts',cand_weight,0,[w,h],candRad);
