@@ -15,6 +15,7 @@ jumpType = 'all';
 candScale = 2;
 visVideo = false;
 measures = {'chisq', 'auc','nss'};
+methods = {'proposed','self'};
 % gaze settings
 gazeParam.pointSigma = 10;
 gazeRoot = fullfile(diemDataRoot, 'cache', '00_gaze');
@@ -32,7 +33,7 @@ isdirbool = cell2mat(extractfield(files,'isdir'));
 filenames = extractfield(files,'name');
 dirnames = filenames(isdirbool);
 dirnames = dirnames(~ismember(dirnames,{'.','..'}));
-for kk=1:length(dirnames);
+for kk=2:length(dirnames);
     visRoot = fullfile(saveloc,dirnames{kk});
     if ~exist('visRoot','dir')
         mkdir(visRoot);
@@ -75,12 +76,12 @@ for kk=1:length(dirnames);
     fprintf('%s Finished data collection Directory %s:  %d/%d \n',datestr(datetime),dirnames{kk},kk,length(dirnames));
     
     %% results
-    save(fullfile(visRoot, '00_similarity.mat'), 'sim', 'measures', 'methods', 'testIdx', 'testSubset');
+    save(fullfile(visRoot, '00_similarity.mat'), 'sim', 'measures', 'methods', 'videoIdx');
     %% visualize
     nmeas = length(measures);
     for im = 1:length(measures)
-        meanChiSq = nan(nt, length(methods));
-        for i = 1:nt
+        meanChiSq = nan(nv, length(methods));
+        for i = 1:nv
             for j = 1:length(methods)
                 chiSq = sim{i}(j,im,:);
                 meanChiSq(i, j) = mean(chiSq(~isnan(chiSq)));
@@ -90,7 +91,7 @@ for kk=1:length(dirnames);
         ind = find(~isnan(meanChiSq(:,1)));
         meanChiSq = meanChiSq(ind, :);
         meanMeas = mean(meanChiSq, 1);
-        lbl = videos(testIdx(testSubset(ind)));
+        lbl = videos(videoIdx(ind));
         
         % add dummy if there is only one test
         if (size(meanChiSq, 1) == 1), meanChiSq = [meanChiSq; zeros(1, length(methods))]; end;
@@ -105,7 +106,7 @@ for kk=1:length(dirnames);
     end
     
     % histogram
-    visCompareMethods(sim, methods, measures, videos, testIdx(testSubset), 'boxplot');
+    visCompareMethods(sim, methods, measures, videos, videoIdx, 'boxplot');
     fprintf('Finished to Evaluate on %s on Directory %s\n',datestr(datetime('now')),dirnames{kk});
 end
 restoredefaultpath;
