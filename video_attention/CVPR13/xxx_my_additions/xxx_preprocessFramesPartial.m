@@ -1,4 +1,4 @@
-function frs = xxx_preprocessFramesPartial(vr, frIdx, gbvsParam, ofParam, poseletModel, cache)
+function frs = xxx_preprocessFramesPartial(vr, frIdx, gbvsParam, ofParam, cache)
 % Preprocesses video frames by calculating statis saliency, optical flow,
 % face and poselet detector. Can work with frame cache.
 %
