@@ -1,4 +1,4 @@
-function featVec = xxx_jumpFeaturePoint6PCAmPCAsGBVSOF(srcFr, srcCand, dstFr, dstCand, options)
+function featVec = xxx_jumpFeaturePoint6PCAmPCAs(srcFr, srcCand, dstFr, dstCand, options)
 % builds feature vector at a single source and destination candidate.
 % Optimized for CVPR13 model and does not use srcFr. It can be set to empty
 % to save preprocessing
@@ -51,9 +51,8 @@ function vec = cand2Vec(fr, cand, options)
 pt = round(cand.point);
 
 % preallocate
-%    3 + 2*3+3 = 3+6+3=12 % PCAsPCAm and addons
-%    3 + 3*3+3*3+3 = 3+9+9+3=24 %PCAsPCAmGBVSOF and addons
-nf = 3 + 3*length(options.motionScales) + 2*length(options.saliencyScales) + length(options.contrastScales);
+% 3+ 2*3+3 = 12+2=14
+nf = 3 + 2*length(options.saliencyScales) + length(options.contrastScales);
 vec = zeros(nf, 1);
 
 curI = 1;
@@ -63,48 +62,35 @@ vec(curI) = sqrt(abs(sum((pt - cen).^2)));
 curI = curI + 1;
 
 % v4
-% motion energy
-g1 = fspecial('gaussian', [51 51], 10);
-g2 = fspecial('gaussian', [51 51], 20);
-ofx = abs(imfilter(fr.ofx, g2, 'symmetric') - imfilter(fr.ofx, g1, 'symmetric'));
-ofy = abs(imfilter(fr.ofy, g2, 'symmetric') - imfilter(fr.ofy, g1, 'symmetric'));
-ofm = sqrt(fr.ofx.^2 + fr.ofy.^2);
-ofm = abs(imfilter(ofm, g2, 'symmetric') - imfilter(ofm, g1, 'symmetric'));
-nsc = length(options.motionScales);
-for i = 1:nsc
-    ri = round(max(1, pt(2)-options.motionScales(i)):min(fr.height, pt(2)+options.motionScales(i)));
-    rj = round(max(1, pt(1)-options.motionScales(i)):min(fr.width, pt(1)+options.motionScales(i)));
-    vec(curI-1+i) = mean(mean(ofm(ri, rj)));
-    vec(curI-1+nsc+i) = mean(mean(ofx(ri, rj)));
-    vec(curI-1+2*nsc+i) = mean(mean(ofy(ri, rj)));
-end
-curI = curI + 3*nsc;
-
-% v3
 % % motion energy
+% g1 = fspecial('gaussian', [51 51], 10);
+% g2 = fspecial('gaussian', [51 51], 20);
+% ofx = abs(imfilter(fr.ofx, g2, 'symmetric') - imfilter(fr.ofx, g1, 'symmetric'));
+% ofy = abs(imfilter(fr.ofy, g2, 'symmetric') - imfilter(fr.ofy, g1, 'symmetric'));
 % ofm = sqrt(fr.ofx.^2 + fr.ofy.^2);
+% ofm = abs(imfilter(ofm, g2, 'symmetric') - imfilter(ofm, g1, 'symmetric'));
 % nsc = length(options.motionScales);
 % for i = 1:nsc
 %     ri = round(max(1, pt(2)-options.motionScales(i)):min(fr.height, pt(2)+options.motionScales(i)));
 %     rj = round(max(1, pt(1)-options.motionScales(i)):min(fr.width, pt(1)+options.motionScales(i)));
 %     vec(curI-1+i) = mean(mean(ofm(ri, rj)));
-%     vec(curI-1+nsc+i) = mean(mean(fr.ofx(ri, rj)));
-%     vec(curI-1+2*nsc+i) = mean(mean(fr.ofy(ri, rj)));
+%     vec(curI-1+nsc+i) = mean(mean(ofx(ri, rj)));
+%     vec(curI-1+2*nsc+i) = mean(mean(ofy(ri, rj)));
 % end
 % curI = curI + 3*nsc;
 
-% static saliency
-nsc = length(options.saliencyScales);
-if (isempty(fr.saliency))
-    vec(curI:curI+nsc-1) = 0;
-else
-    for i = 1:nsc
-        ri = round(max(1, pt(2)-options.saliencyScales(i)):min(fr.height, pt(2)+options.saliencyScales(i)));
-        rj = round(max(1, pt(1)-options.saliencyScales(i)):min(fr.width, pt(1)+options.saliencyScales(i)));
-        vec(curI-1+i) = mean(mean(fr.saliency(ri, rj)));
-    end
-end
-curI = curI + nsc;
+% % static saliency
+% nsc = length(options.saliencyScales);
+% if (isempty(fr.saliency))
+%     vec(curI:curI+nsc-1) = 0;
+% else
+%     for i = 1:nsc
+%         ri = round(max(1, pt(2)-options.saliencyScales(i)):min(fr.height, pt(2)+options.saliencyScales(i)));
+%         rj = round(max(1, pt(1)-options.saliencyScales(i)):min(fr.width, pt(1)+options.saliencyScales(i)));
+%         vec(curI-1+i) = mean(mean(fr.saliency(ri, rj)));
+%     end
+% end
+% curI = curI + nsc;
 
 % PCAm
 nsc = length(options.saliencyScales);

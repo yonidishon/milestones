@@ -17,3 +17,4 @@ slprj/
 
 # Session info
 octave-workspace
+*.log
