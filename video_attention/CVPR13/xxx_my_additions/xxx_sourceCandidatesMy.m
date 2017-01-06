@@ -77,7 +77,7 @@ else
             end
         end
     elseif (strcmp(type, 'cand')) % use jump candidates
-        maps = cat(3,(ofx.^2 + ofy.^2),fr.saliency, fr.pcam, fr.pcas);
+        maps = cat(3,fr.pcam, fr.pcas);
         cands = xxx_jumpCandidates3onlyPCAsPCAm(maps, options); %Yonatan - changed this line from jumpCnadidates to jumpCandidates3
         
         % coverage is score
