@@ -80,101 +80,103 @@ if (~exist(visRoot, 'dir'))
 end
 
 %% test
-for i = 1:2 %TODO
+for i = 1:20 %TODO
     iv = testIdx(testSubset(i));
     fprintf('Processing %s... ', videos{iv}); tic;
-    
-    % prepare video
-    if (isunix) % use matlab video reader on Unix
-        vr = VideoReaderMatlab(fullfile(uncVideoRoot, sprintf('%s.mat', videos{iv})));
-    else
-        if (verNum < 2011)
-            vr = mmreader(fullfile(uncVideoRoot, sprintf('%s.avi', videos{iv})));
-        else
-            vr = VideoReader(fullfile(uncVideoRoot, sprintf('%s.avi', videos{iv})));
-        end
-    end
-    m = vr.Height;
-    n = vr.Width;
-    videoLen = vr.numberOfFrames;
-    param = struct('videoReader', vr);
-    
-    % load jump frames
-    [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType, 50, 30, videoLen - 30);
-    nc = length(jumpFrames);
-    
+%     
+%     % prepare video
+%     if (isunix) % use matlab video reader on Unix
+%         vr = VideoReaderMatlab(fullfile(uncVideoRoot, sprintf('%s.mat', videos{iv})));
+%     else
+%         if (verNum < 2011)
+%             vr = mmreader(fullfile(uncVideoRoot, sprintf('%s.avi', videos{iv})));
+%         else
+%             vr = VideoReader(fullfile(uncVideoRoot, sprintf('%s.avi', videos{iv})));
+%         end
+%     end
+%     m = vr.Height;
+%     n = vr.Width;
+%     videoLen = vr.numberOfFrames;
+%     param = struct('videoReader', vr);
+%     
+%     % load jump frames
+%     [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType, 50, 30, videoLen - 30);
+%     nc = length(jumpFrames);
+%     
     % load gaze data
     s = load(fullfile(cache.gazeRoot, sprintf('%s.mat', videos{iv})));
     gazeData = s.data;
     clear s;
-
+% 
     gazeParam.gazeData = gazeData.points;
-
-    videoLen = min(videoLen, length(gazeData.points));
-    
-    resFile = fullfile(visRoot, sprintf('%s.mat', videos{iv}));
-%     if (~cache.renewJumps && exist(resFile, 'file')) % load from cache
-%         fprintf('(loading)... ');
-%         s = load(resFile);
-%         frames = s.frames;
-%         indFr = s.indFr;
-%         cands = s.cands;
-%         predMaps = s.predMaps;
-%         clear s;
-        
-%    else % calculate
-        cands = cell(nc, 1); % candidates per frame
-        predMaps = zeros(m, n, nc); % dense maps
-        
-        for ic = 1:nc
-            if ((jumpFrames(ic) + before >= 3) && (jumpFrames(ic) + after <= videoLen))
-                % source frame
-                if (strcmp(jumpFromType, 'center')) % jump from center
-                    srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
-                elseif (strcmp(jumpFromType, 'gaze')) % jump from gaze map
-                    srcGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+before}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+before}, 1)), 0, [n, m], gazeParam.pointSigma);
-                    [srcCands, ~, ~, ~] = sourceCandidates([], srcGazeMap, options, sourceType);
-                elseif (strcmp(jumpFromType, 'prev-cand')) % jump from previous candidate set
-                    if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
-                        srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
-                    else
-                        srcCands = cands{ic-1};
-                    end
-                elseif (strcmp(jumpFromType, 'prev-int')) % jump from previous integrated map
-                    if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
-                        srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
-                    else
-                        srcCands = xxx_sourceCandidatesForTrainDimtry([], predMaps(:,:,ic-1), options, sourceType);
-                    end
-                else
-                    error('Unsupported jump from type: %s', jumpFromType);
-                end
-                
-                dstCands = xxx_jumpPerform6Partial(srcCands, jumpFrames(ic)+before, jumpFrames(ic)+after, param, options, gbvsParam, ofParam, poseletModel, rf,cache); %TODO
-                predMaps(:,:,ic) = candidate2map(dstCands, [n, m], candScale);
-                cands{ic} = dstCands;
-            end
-        end
-        
-        % compare
-        frames = jumpFrames + after;
-        indFr = find(frames <= videoLen);
-        
-        % save
-        save(fullfile(visRoot, sprintf('%s.mat', videos{iv})), 'frames', 'indFr', 'cands', 'predMaps');
-    
- %   end
+% 
+%     videoLen = min(videoLen, length(gazeData.points));
+%     
+%     resFile = fullfile(visRoot, sprintf('%s.mat', videos{iv}));
+% %     if (~cache.renewJumps && exist(resFile, 'file')) % load from cache
+% %         fprintf('(loading)... ');
+% %         s = load(resFile);
+% %         frames = s.frames;
+% %         indFr = s.indFr;
+% %         cands = s.cands;
+% %         predMaps = s.predMaps;
+% %         clear s;
+%         
+% %    else % calculate
+%         cands = cell(nc, 1); % candidates per frame
+%         predMaps = zeros(m, n, nc); % dense maps
+%         
+%         for ic = 1:nc
+%             if ((jumpFrames(ic) + before >= 3) && (jumpFrames(ic) + after <= videoLen))
+%                 % source frame
+%                 if (strcmp(jumpFromType, 'center')) % jump from center
+%                     srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
+%                 elseif (strcmp(jumpFromType, 'gaze')) % jump from gaze map
+%                     srcGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+before}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+before}, 1)), 0, [n, m], gazeParam.pointSigma);
+%                     [srcCands, ~, ~, ~] = sourceCandidates([], srcGazeMap, options, sourceType);
+%                 elseif (strcmp(jumpFromType, 'prev-cand')) % jump from previous candidate set
+%                     if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
+%                         srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
+%                     else
+%                         srcCands = cands{ic-1};
+%                     end
+%                 elseif (strcmp(jumpFromType, 'prev-int')) % jump from previous integrated map
+%                     if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
+%                         srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
+%                     else
+%                         srcCands = xxx_sourceCandidatesForTrainDimtry([], predMaps(:,:,ic-1), options, sourceType);
+%                     end
+%                 else
+%                     error('Unsupported jump from type: %s', jumpFromType);
+%                 end
+%                 
+%                 dstCands = xxx_jumpPerform6Partial(srcCands, jumpFrames(ic)+before, jumpFrames(ic)+after, param, options, gbvsParam, ofParam, poseletModel, rf,cache); %TODO
+%                 predMaps(:,:,ic) = candidate2map(dstCands, [n, m], candScale);
+%                 cands{ic} = dstCands;
+%             end
+%         end
+%         
+%         % compare
+%         frames = jumpFrames + after;
+%         indFr = find(frames <= videoLen);
+%         
+%         % save
+%         save(fullfile(visRoot, sprintf('%s.mat', videos{iv})), 'frames', 'indFr', 'cands', 'predMaps');
+%     
+%  %   end
     
     % visualize
     videoFile = fullfile(visRoot, sprintf('%s.avi', videos{iv}));
     saveVideo = visVideo && (~exist(videoFile, 'file'));
         
     sim{i} = zeros(length(methods), length(measures), length(indFr));
-    if (saveVideo && verNum >= 2012)
-        vw = VideoWriter(videoFile, 'Motion JPEG AVI'); % 'Motion JPEG AVI' or 'Uncompressed AVI' or 'MPEG-4' on 2012a.
-        open(vw);
-    end
-    
+%     if (saveVideo && verNum >= 2012)
+%         vw = VideoWriter(videoFile, 'Motion JPEG AVI'); % 'Motion JPEG AVI' or 'Uncompressed AVI' or 'MPEG-4' on 2012a.
+%         open(vw);
+%     end
+    ss = load(fullfile(visRoot,sprintf('%s.mat', videos{iv})));
+    predMaps = ss.predMaps;
+    clear ss;
     try
         for ifr = 1:length(indFr)
             % fr = xxx_preprocessFramesPartial(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
@@ -200,14 +202,14 @@ for i = 1:2 %TODO
     fprintf('%f sec\n', toc);
 end
 
-%save(fullfile(visRoot, '00_similarity.mat'), 'sim', 'measures', 'methods', 'testIdx', 'testSubset');
-save(fullfile(visRoot, '00_similarity_1_2.mat'), 'sim', 'measures', 'methods', 'testIdx', 'testSubset');
-fprintf('Finished to compute similarity of 1-2 on %s\n',datestr(datetime('now')));
-secondsim = load(fullfile(visRoot,'00_similarity.mat'));
-secondsim = secondsim.sim;
-for ij=3:20
-    sim{ij}= secondsim{ij};
-end
+save(fullfile(visRoot, '00_similarity.mat'), 'sim', 'measures', 'methods', 'testIdx', 'testSubset');
+% save(fullfile(visRoot, '00_similarity_1_2.mat'), 'sim', 'measures', 'methods', 'testIdx', 'testSubset');
+% fprintf('Finished to compute similarity of 1-2 on %s\n',datestr(datetime('now')));
+% secondsim = load(fullfile(visRoot,'00_similarity.mat'));
+% secondsim = secondsim.sim;
+% for ij=3:20
+%     sim{ij}= secondsim{ij};
+% end
 %% visualize
 nmeas = length(measures);
 for im = 1:length(measures)
