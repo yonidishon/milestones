@@ -6,10 +6,10 @@ list_orig=subdir('\\cgm47\d\Dimtry_orig\DIEM');
 list_my=subdir('\\cgm47\d\Dima_Analysis_Milestones');
 %list_submit=subdir('\\cgm47\D\DimaReleaseCode_CGMwebsite');
 list_submit=subdir('\\cgm47\DIEM\video_unc');
-%tot_list = [list_orig';list_my';list_submit'];
+tot_list = [list_orig';list_my';list_submit'];
 %tot_list = list_my';
 %tot_list = [list_orig';list_my'];
-tot_list = {'\\cgm47\d\DIEM\video_unc'};
+%tot_list = {'\\cgm47\d\DIEM\video_unc'};
 
 %% 2. Getting all trained models
 models ={};
@@ -25,8 +25,9 @@ end
 %% 3. Plotting the OOB error rate vs iteration;
 figure('Name','OOB error rate');
 %chosen_models = [models(6);models([28,31,33,34])];
-chosen_models = models([6,8:11]);
-%chosen_models = [models(6);models([31,33,34,35])];
+%chosen_models = models([6,8:11]);
+chosen_models_names = {'RO','RLL','RLLPm','PmPs-5','RLLPmPs'};
+chosen_models = [models(6);models([31,33,35,36])];
 flags = ones(length(chosen_models),1);
 for ii=1:length(chosen_models)
     model = load(chosen_models{ii});
@@ -45,7 +46,8 @@ hold off;
 title('OOB error rate');
 xlabel('iteration (# trees)');
 ylabel('OOB error rate');
-legend(chosen_models(boolean(flags)),'Interpreter', 'none');
+%legend(chosen_models(boolean(flags)),'Interpreter', 'none');
+legend(chosen_models_names);
 %% 4. Getting the importantcy of each feature
 for ii=1:length(chosen_models)
     figure('Name',chosen_models{ii})
