@@ -168,15 +168,17 @@ for i = 1:20 %TODO
     % visualize
     videoFile = fullfile(visRoot, sprintf('%s.avi', videos{iv}));
     saveVideo = visVideo && (~exist(videoFile, 'file'));
-        
+        ss = load(fullfile(visRoot,sprintf('%s.mat', videos{iv})));
+    predMaps = ss.predMaps;
+    indFr = ss.indFr;
+    frames = ss.frames;
+    clear ss;    
     sim{i} = zeros(length(methods), length(measures), length(indFr));
 %     if (saveVideo && verNum >= 2012)
 %         vw = VideoWriter(videoFile, 'Motion JPEG AVI'); % 'Motion JPEG AVI' or 'Uncompressed AVI' or 'MPEG-4' on 2012a.
 %         open(vw);
 %     end
-    ss = load(fullfile(visRoot,sprintf('%s.mat', videos{iv})));
-    predMaps = ss.predMaps;
-    clear ss;
+
     try
         for ifr = 1:length(indFr)
             % fr = xxx_preprocessFramesPartial(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);

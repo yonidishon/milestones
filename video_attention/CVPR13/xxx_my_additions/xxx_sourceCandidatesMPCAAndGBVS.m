@@ -77,12 +77,6 @@ else
             end
         end
     elseif (strcmp(type, 'cand')) % use jump candidates
-        %g1 = fspecial('gaussian', [51 51], 10);
-        %g2 = fspecial('gaussian', [51 51], 20);
-        %ofx = abs(imfilter(fr.ofx, g2, 'symmetric') - imfilter(fr.ofx, g1, 'symmetric'));
-        %ofy = abs(imfilter(fr.ofy, g2, 'symmetric') - imfilter(fr.ofy, g1, 'symmetric'));
-        %if isfield(fr,'pcam') && isfield(fr,'pcas')
-            maps = cat(3,(ofx.^2 + ofy.^2),fr.saliency, fr.pcam, fr.pcas);
         if isfield(fr,'pcam')
             maps = cat(3,fr.saliency, fr.pcam);
         else

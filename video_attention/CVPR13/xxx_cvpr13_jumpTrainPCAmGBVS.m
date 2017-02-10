@@ -19,7 +19,7 @@ clear options;
 % 20            distance (Euclidian) of jump                        inter
 % 21            direction of jump (arctan of the vector angle)      inter
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\CVPR13','xxx_my_additions'));
+addpath(fullfile('C:\Users\ydishon\Documents\milestones\video_attention\CVPR13','xxx_my_additions'));
 settings();
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
@@ -53,7 +53,7 @@ options.useLabel = true; % true if the label of feature should be calculated
 options.distType = 'euc';
 options.gazeThreshold = 0.2; % distance to gaze within it the candidate concidered as good (Euclidian)
 options.rectSzTh = 0; % minimal size for gaze candidate
-options.featureIdx = 1:23; % cvpr13_v5_3
+options.featureIdx = 1:14; % cvpr13_v5_3
 % options.featureIdx = [1:10, 14:16, 20:22]; % cvpr13_v5_3_no_stat
 % options.featureIdx = [1, 11:22]; % cvpr13_v5_3_no_mot
 % options.featureIdx = [2:13, 17:19, 21:22]; % cvpr13_v5_3_no_sem

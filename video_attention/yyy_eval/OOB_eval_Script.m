@@ -26,8 +26,8 @@ end
 figure('Name','OOB error rate');
 %chosen_models = [models(6);models([28,31,33,34])];
 %chosen_models = models([6,8:11]);
-chosen_models_names = {'RO','RLL','RLLPm','PmPs-5','RLLPmPs'};
-chosen_models = [models(6);models([31,33,35,36])];
+chosen_models_names = {'RO','RLL','RLLPm','PmGBVS','PmPs-5','RLLPmPs'};
+chosen_models = [models(6);models([31,33,34,36,37])];
 flags = ones(length(chosen_models),1);
 for ii=1:length(chosen_models)
     model = load(chosen_models{ii});
