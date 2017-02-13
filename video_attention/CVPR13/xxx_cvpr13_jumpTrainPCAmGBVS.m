@@ -53,7 +53,7 @@ options.useLabel = true; % true if the label of feature should be calculated
 options.distType = 'euc';
 options.gazeThreshold = 0.2; % distance to gaze within it the candidate concidered as good (Euclidian)
 options.rectSzTh = 0; % minimal size for gaze candidate
-options.featureIdx = 1:14; % cvpr13_v5_3
+options.featureIdx = 1:32; % cvpr13_v5_3
 % options.featureIdx = [1:10, 14:16, 20:22]; % cvpr13_v5_3_no_stat
 % options.featureIdx = [1, 11:22]; % cvpr13_v5_3_no_mot
 % options.featureIdx = [2:13, 17:19, 21:22]; % cvpr13_v5_3_no_sem
@@ -294,9 +294,11 @@ if (~isempty(trainSubset))
     % normalize features
     feat = [posFeat; negFeat];
     nfeat = size(feat, 1);
-    options.featureNormMean = mean(feat, 1);
+    tmpfeat = feat;
+    tmpfeat(~isfinite(feat))=0;
+    options.featureNormMean = mean(tmpfeat, 1);
     feat = feat - repmat(options.featureNormMean, [nfeat, 1]);
-    options.featureNormStd = std(feat, 0, 1);
+    options.featureNormStd = std(tmpfeat, 0, 1);
     feat = feat ./ (repmat(options.featureNormStd, [nfeat, 1])+eps());
     
     % train random forest

@@ -29,7 +29,7 @@ function [features, distances, labels, jumps] = xxx_jumpPairwiseFeatures6PCAmGBV
 %   jumps       array of jumps, [nsrc * ndst X 6], where each row is a
 %               jump: [src_x, src_y, dst_x, dst_y, dst_type, label]
 
-fvMax = 14;
+fvMax = 32;%=12+10*2; for each srcCand
 
 if (exist('cache', 'var'))
     cacheD = fullfileCreate(cache.featureRoot, dstFr.videoName);
@@ -115,8 +115,7 @@ else % calculate features
             % prepare jumps
             %jumps(idst, :) = [extractfield(srcCands,'point'), dstCands{idst}.point, dstCands{idst}.type, labels(idst)];
         end
-    end
-    
+        
     % save
     if (~isempty(cacheFile))
         save(cacheFile, 'features', 'distances', 'labels', 'jumps');
