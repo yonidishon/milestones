@@ -65,28 +65,21 @@ nDst = length(dstCands);
 
 % features
 features = xxx_jumpPairwiseFeatures6PCAmGBVS(srcFr, srcCands, dstFr, dstCands, options, cache); % v6, cached
-% %TODO strange: nDst ~= size(features, 2)
-% if (nSrc == 1 && size(features, 2) ~= nDst)
-%     nDst = min(nDst, size(features, 2));
-%     dstCands = dstCands(1:nDst);
-% end
-jumpProb = zeros(nSrc, nDst);
-lblHard = zeros(nSrc, nDst);
+jumpProb = zeros(1, nDst);
+lblHard = zeros(1, nDst);
 
-% pairwise jumps
-for isrc = 1:nSrc % predict for every source
+% joint probability jumps jumps
     for idst = 1:nDst
         if (strcmp(options.rfType, 'reg'))
-            lbl = regRF_predict(features(:, nDst*(isrc-1)+idst)', rf); % RF reg
+            lbl = regRF_predict(features(:,idst)', rf); % RF reg
         elseif (strcmp(options.rfType, 'reg-dist'))
-            lbl = regRF_predict(features(:, nDst*(isrc-1)+idst)', rf); % RF regression for distance
+            lbl = regRF_predict(features(:, idst)', rf); % RF regression for distance
         elseif (strcmp(options.rfType, 'class'))
-            [lblHard(isrc, idst), lbl] = classRF_predict(features(:, nDst*(isrc-1)+idst)', rf); % RF classification
+            [lblHard(idst), lbl] = classRF_predict(features(:,idst)', rf); % RF classification
             lbl = lbl(2) / sum(lbl);
         end
-        jumpProb(isrc, idst) = lbl;
+        jumpProb(idst) = lbl;
     end
-end
 
 % labels post-processing
 if (strcmp(options.rfType, 'reg'))
@@ -102,17 +95,18 @@ elseif (strcmp(options.rfType, 'reg-dist'))
     end
 elseif (strcmp(options.rfType, 'class'))
     % use hard labeling
-    lblHard(~any(lblHard, 2), :) = 1;
+    % lblHard(~any(lblHard), :) = 1;
     jumpProb = jumpProb .* lblHard;
 end
 
 % score normalization
-jps = sum(jumpProb, 2);
+jps = sum(jumpProb);
 idx = find(jps > 0);
 if (~isempty(idx))
-    jumpProb(idx, :) = jumpProb(idx, :) ./ repmat(jps(idx), [1, nDst]);
+    jumpProb = jumpProb ./ jps;
 end
-score = sum(jumpProb .* repmat(srcScore, [1, nDst]), 1);
+%score = sum(jumpProb .* repmat(srcScore, [1, nDst]), 1);
+score = jumpProb;
 if (max(score > 0))
     score = score ./ max(score);
 end

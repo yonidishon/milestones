@@ -40,9 +40,9 @@ function featVec = xxx_jumpFeaturePoint6PCAmGBVS(srcFr, srcCand, dstFr, dstCand,
 %   featVec         created feature vector, [nfeat X 1]
 
 vn = cand2Vec(dstFr, dstCand, options);
-v = srcCand.point - dstCand.point;
-dist = sqrt(abs(sum(v.^2)));
-drc = atan(v(2)/v(1));
+v = extractfield(srcCand,'point') - repmat(dstCand.point,length(srcCand),1);
+dist = sqrt(abs(sum(v.^2,2)));
+drc = atan(v(:,2)/v(:,1));
 
 featVec = [vn; dist; drc];
 
