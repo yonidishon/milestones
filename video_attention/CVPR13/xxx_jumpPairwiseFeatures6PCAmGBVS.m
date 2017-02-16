@@ -79,7 +79,7 @@ else % calculate features
         end
     end
     
-  
+  if ~isempty(srcCands)
         for idst = 1:nDst
             features(:, idst) = xxx_jumpFeaturePoint6PCAmGBVS(srcFr, srcCands, dstFr, dstCands{idst}, options);
             
@@ -115,7 +115,7 @@ else % calculate features
             % prepare jumps
             %jumps(idst, :) = [extractfield(srcCands,'point'), dstCands{idst}.point, dstCands{idst}.type, labels(idst)];
         end
-        
+  end
     % save
     if (~isempty(cacheFile))
         save(cacheFile, 'features', 'distances', 'labels', 'jumps');
