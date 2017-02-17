@@ -23,7 +23,7 @@ addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_salie
 settings();
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-VERSION = 'PCAmOFGBVS';
+VERSION = 'PCAmOFGBVS_allsrc';
 diemDataRoot = '\\cgm47\D\DIEM';
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
@@ -53,7 +53,7 @@ options.useLabel = true; % true if the label of feature should be calculated
 options.distType = 'euc';
 options.gazeThreshold = 0.2; % distance to gaze within it the candidate concidered as good (Euclidian)
 options.rectSzTh = 0; % minimal size for gaze candidate
-options.featureIdx = 1:23; % cvpr13_v5_3
+options.featureIdx =1:(23+9*2); %1:23; % cvpr13_v5_3 %TODO - VERIFY - 
 % options.featureIdx = [1:10, 14:16, 20:22]; % cvpr13_v5_3_no_stat
 % options.featureIdx = [1, 11:22]; % cvpr13_v5_3_no_mot
 % options.featureIdx = [2:13, 17:19, 21:22]; % cvpr13_v5_3_no_sem
@@ -294,9 +294,11 @@ if (~isempty(trainSubset))
     % normalize features
     feat = [posFeat; negFeat];
     nfeat = size(feat, 1);
-    options.featureNormMean = mean(feat, 1);
+    tmpfeat = feat;
+    tmpfeat(~isfinite(feat))=0;
+    options.featureNormMean = mean(tmpfeat, 1);
     feat = feat - repmat(options.featureNormMean, [nfeat, 1]);
-    options.featureNormStd = std(feat, 0, 1);
+    options.featureNormStd = std(tmpfeat, 0, 1);
     feat = feat ./ (repmat(options.featureNormStd, [nfeat, 1])+eps());
     
     % train random forest

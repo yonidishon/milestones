@@ -29,7 +29,7 @@ function [features, distances, labels, jumps] = xxx_jumpPairwiseFeatures6PCAmOFG
 %   jumps       array of jumps, [nsrc * ndst X 6], where each row is a
 %               jump: [src_x, src_y, dst_x, dst_y, dst_type, label]
 
-fvMax = 23;%22
+fvMax = 23+9*2;%22
 
 if (exist('cache', 'var'))
     cacheD = fullfileCreate(cache.featureRoot, dstFr.videoName);
@@ -40,10 +40,10 @@ end
 
 nSrc = length(srcCands);
 nDst = length(dstCands);
-features = zeros(fvMax, nSrc * nDst);
-labels = zeros(1, nSrc * nDst);
-distances = zeros(1, nSrc * nDst);
-jumps = zeros(nSrc * nDst, 6);
+features = zeros(fvMax, nDst);
+labels = zeros(1, nDst);
+distances = zeros(1,nDst);
+jumps = zeros(nDst, 6);
 
 if (~isempty(cacheFile) && ~cache.renewFeatures && exist(cacheFile, 'file')) % load from cache
     s = load(cacheFile);
@@ -79,9 +79,9 @@ else % calculate features
         end
     end
     
-    for isrc = 1:nSrc
+    if ~isempty(srcCands)
         for idst = 1:nDst
-            features(:, nDst*(isrc-1)+idst) = xxx_jumpFeaturePoint6PCAmGBVSOF(srcFr, srcCands{isrc}, dstFr, dstCands{idst}, options);
+            features(:, idst) = xxx_jumpFeaturePoint6PCAmGBVSOF(srcFr, srcCands, dstFr, dstCands{idst}, options);
             
             % set label
             if (isfield(options, 'useLabel') && options.useLabel)
