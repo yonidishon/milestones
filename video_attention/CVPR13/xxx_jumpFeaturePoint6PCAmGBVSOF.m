@@ -43,7 +43,7 @@ vn = cand2Vec(dstFr, dstCand, options);
 v = cell2mat(cellfun(@(x)x.point,srcCand(:),'UniformOutput',false))...
     - repmat(dstCand.point,length(srcCand),1);
 dist = sqrt(abs(sum(v.^2,2)));
-drc = atan(v(:,2)/v(:,1));
+drc = atan(v(:,2)./v(:,1));
 
 % make feature vector of constant size
 if length(srcCand) > 2*options.topCandsNum

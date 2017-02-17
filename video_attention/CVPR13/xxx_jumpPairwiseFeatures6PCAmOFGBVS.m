@@ -113,7 +113,7 @@ else % calculate features
             end
             
             % prepare jumps
-            jumps(idst, :) = [extractfield(srcCands,'point'), dstCands{idst}.point, dstCands{idst}.type, labels(idst)];
+            %jumps(idst, :) = [extractfield(srcCands,'point'), dstCands{idst}.point, dstCands{idst}.type, labels(idst)];
         end
     end
     
