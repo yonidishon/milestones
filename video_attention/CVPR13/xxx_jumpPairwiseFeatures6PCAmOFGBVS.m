@@ -86,26 +86,26 @@ else % calculate features
             % set label
             if (isfield(options, 'useLabel') && options.useLabel)
                 if (dstCands{idst}.type == 6) % destination is gaze
-                    labels(nDst*(isrc-1)+idst) = 1;
+                    labels(idst) = 1;
                 else
                     if (strcmp(options.distType, 'mahal')) % mahalanobis distance
-                        distances(nDst*(isrc-1)+idst) = mahalD(idst);
+                        distances(idst) = mahalD(idst);
                         if (mahalD(idst) <= options.gazeThreshold)
-                            labels(nDst*(isrc-1)+idst) = 1;
+                            labels(+idst) = 1;
                         else
-                            labels(nDst*(isrc-1)+idst) = -1;
+                            labels(idst) = -1;
                         end
                     elseif strcmp(options.distType, 'euc') % euclidian distance
                         if (isempty(gtPts))
-                            labels(nDst*(isrc-1)+idst) = -1;
-                            distances(nDst*(isrc-1)+idst) = inf;
+                            labels(idst) = -1;
+                            distances(idst) = inf;
                         else
                             D = pdist2(gtPts, dstCands{idst}.point, 'euclidean');
-                            distances(nDst*(isrc-1)+idst) = min(D);
+                            distances(idst) = min(D);
                             if (min(D) <= gazeTh)
-                                labels(nDst*(isrc-1)+idst) = 1;
+                                labels(idst) = 1;
                             else
-                                labels(nDst*(isrc-1)+idst) = -1;
+                                labels(idst) = -1;
                             end
                         end
                     end
@@ -113,7 +113,7 @@ else % calculate features
             end
             
             % prepare jumps
-            jumps(nDst*(isrc-1)+idst, :) = [srcCands{isrc}.point, dstCands{idst}.point, dstCands{idst}.type, labels(nDst*(isrc-1)+idst)];
+            jumps(idst, :) = [extractfield(srcCands,'point'), dstCands{idst}.point, dstCands{idst}.type, labels(idst)];
         end
     end
     
