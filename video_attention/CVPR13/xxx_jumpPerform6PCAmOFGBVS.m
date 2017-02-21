@@ -80,7 +80,7 @@ lblHard = zeros(1, nDst);
         elseif (strcmp(options.rfType, 'reg-dist'))
             lbl = regRF_predict(features(:, idst)', rf); % RF regression for distance
         elseif (strcmp(options.rfType, 'class'))
-            [lblHard(isrc, idst), lbl] = classRF_predict(features(:, idst)', rf); % RF classification
+            [lblHard(idst), lbl] = classRF_predict(features(:, idst)', rf); % RF classification
             lbl = lbl(2) / sum(lbl);
         end
         jumpProb(idst) = lbl;
