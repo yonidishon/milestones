@@ -23,7 +23,7 @@ addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_salie
 settings();
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-VERSION = 'PCAmOFGBVS_allsrc';
+VERSION = 'PCAmOFGBVS_allsrc_moredata';
 diemDataRoot = '\\cgm47\D\DIEM';
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
@@ -147,7 +147,14 @@ if (~isempty(precalcSubset))
         m = vr.Height;
         n = vr.Width;
         videoLen = vr.numberOfFrames;
-        [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType);
+        [jumpFrames_cutneg, before_cutneg, after_cutneg] = jumpFramesLoad(diemDataRoot, iv, jumpType);
+        [jumpFrames_tr, before_tr, after_tr] = jumpFramesLoad(diemDataRoot, iv, 'gaze_jump');
+         jumpFrames =[jumpFrames_cutneg;jumpFrames_tr];
+         before =[repmat(before_cutneg,length(jumpFrames_cutneg),1);...
+             repmat(before_tr,length(jumpFrames_tr),1)];
+         after =[repmat(after_cutneg,length(jumpFrames_cutneg),1);...
+             repmat(after_tr,length(jumpFrames_tr),1)];
+        
         nc = length(jumpFrames);
         
         % load gaze data
@@ -156,19 +163,19 @@ if (~isempty(precalcSubset))
         clear s;
      
         for ic = 1:nc
-            if ((jumpFrames(ic) + before >= 3) && (jumpFrames(ic) + after < videoLen) && (jumpFrames(ic) + after < length(gazeParam.gazeData)))
+            if ((jumpFrames(ic) + before(ic) >= 3) && (jumpFrames(ic) + after(ic) < videoLen) && (jumpFrames(ic) + after(ic) < length(gazeParam.gazeData)))
                 % preprocess frames
-                srcFr = xxx_preprocessFramesPartial(vr, jumpFrames(ic)+before, gbvsParam, ofParam, poseletModel); %TODO
-                srcFr.pcam = im2double(imread(fullfile(pcaloc,videos{iv},sprintf('%06d_PCAm.png',jumpFrames(ic)+before))));
-                dstFr = xxx_preprocessFramesPartial(vr, jumpFrames(ic)+after, gbvsParam, ofParam, poseletModel); %TODO
-                dstFr.pcam = im2double(imread(fullfile(pcaloc,videos{iv},sprintf('%06d_PCAm.png',jumpFrames(ic)+after))));
+                srcFr = xxx_preprocessFramesPartial(vr, jumpFrames(ic)+before(ic), gbvsParam, ofParam, poseletModel); %TODO
+                srcFr.pcam = im2double(imread(fullfile(pcaloc,videos{iv},sprintf('%06d_PCAm.png',jumpFrames(ic)+before(ic)))));
+                dstFr = xxx_preprocessFramesPartial(vr, jumpFrames(ic)+after(ic), gbvsParam, ofParam, poseletModel); %TODO
+                dstFr.pcam = im2double(imread(fullfile(pcaloc,videos{iv},sprintf('%06d_PCAm.png',jumpFrames(ic)+after(ic)))));
                 
                 % source candidates
-                srcGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+before}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+before}, 1)), 0, [n, m], gazeParam.pointSigma);
+                srcGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+before(ic)}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+before(ic)}, 1)), 0, [n, m], gazeParam.pointSigma);
                 [srcCands, ~, ~, ~] = xxx_sourceCandidatesMyAndOrig(srcFr, srcGazeMap, options, sourceType); %TODO
                 
                 % destination candidates
-                dstGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+after}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+after}, 1)), 0, [n, m], gazeParam.pointSigma);
+                dstGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+after(ic)}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+after(ic)}, 1)), 0, [n, m], gazeParam.pointSigma);
                 if (useDestGaze) 
                     maps = cat(3, (dstFr.ofx.^2 + dstFr.ofy.^2), dstFr.saliency, dstGazeMap);
                 else
@@ -183,7 +190,7 @@ if (~isempty(precalcSubset))
                 
                 % features
                 options.dstGroundTruth = dstGazeMap;
-                options.dstGroundTruthPts = gazeParam.gazeData{jumpFrames(ic)+after};
+                options.dstGroundTruthPts = gazeParam.gazeData{jumpFrames(ic)+after(ic)};
                 [f, d, l, jumps] = xxx_jumpPairwiseFeatures6PCAmOFGBVS(srcFr, srcCands, dstFr, dstCands, options, cache);
 %                 [f, d, l, jumps] = jumpPairwiseFeatures2(srcFr, srcCands, dstFr, dstCands, options);
 %                 [f, l, jumps] = jumpPairwiseFeatures(srcFr, srcPts, dstFr, dstPts, dstType, options);
