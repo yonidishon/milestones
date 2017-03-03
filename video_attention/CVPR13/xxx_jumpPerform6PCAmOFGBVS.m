@@ -64,8 +64,22 @@ dstCands = xxx_jumpCandidates3addPCAsPCAm(maps, options);
 nDst = length(dstCands);
 
 % here we add the top three source cands
-
+if length(srcCands)>3
+srcCscores=cell2mat(cellfun(@(x)x.score,srcCands,'UniformOutput',false));
+[~,idx]=sort(srcCscores,'descend');
+    topsrc=srcCands(idx(1:3));
+else
+    topsrc=srcCands;
+end
 % here we check if they are overlapping with already calculated dstCands
+dstpnts =cell2mat(cellfun(@(x)x.point',dstCands,'UniformOutput',false))';
+srcpnts =cell2mat(cellfun(@(x)x.point',topsrc,'UniformOutput',false))';
+D = pdist2(srcpnts, dstpnts, 'euclidean');
+selidxsrc = min(D')>options.minTrackSize;
+selsrc=topsrc(selidxsrc);
+if ~isempty(selsrc);
+    dstCands=[dstCands,selsrc];
+end
 
 % features
 features = xxx_jumpPairwiseFeatures6PCAmOFGBVS(srcFr, srcCands, dstFr, dstCands, options, cache); % v6, cached
