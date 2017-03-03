@@ -70,8 +70,13 @@ for ifr = 1:nfr
     data.image = f;
     
     % motion
-    fp = read(vr, ind - 2);
-    [data.ofx, data.ofy] = Coarse2FineTwoFrames(f, fp, ofParam);
+    if (ind > 3)
+        fp = read(vr, ind - 2);
+        [data.ofx, data.ofy] = Coarse2FineTwoFrames(f, fp, ofParam);
+    else
+        data.ofx = zeros(data.height,data.width);
+        data.ofy = data.ofx;
+    end
     
     % saliency
 %     if ((max(f(:)) - min(f(:))) < 25)

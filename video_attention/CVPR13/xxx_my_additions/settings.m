@@ -10,7 +10,6 @@ cand_test_v6orig = '\\cgm10\Users\ydishon\Documents\Video_Saliency\DimaResults\j
 dimaCandFold = {cand_test_v6orig};
 
 diemDataRoot = '\\cgm47\D\DIEM';
-addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\CVPR13','xxx_my_additions'));
 gdrive = '\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive';
 dropbox = '\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox';
 addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
