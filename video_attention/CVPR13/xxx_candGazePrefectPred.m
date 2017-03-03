@@ -15,10 +15,13 @@ D = pdist2(gazePts, candPts,'euclidean');
 % smaller than the candRad
 smlthan = bsxfun(@ge,candRad',D);
 if size(smlthan,1) > 1
-    cand_weight = sum(smlthan);
+    [~,idx]= max(sum(smlthan));
+    cand_weight = zeros(1,length(sum(smlthan)));
+    cand_weight(idx)=1;
 elseif any(smlthan)
     [~,idx]=max(smlthan);
-    cand_weight = smlthan(idx)==smlthan;
+    cand_weight = zeros(1,length(smlthan));
+    cand_weight(idx)=1;
 else
     cand_weight = ones(1,length(candRad));
 end
