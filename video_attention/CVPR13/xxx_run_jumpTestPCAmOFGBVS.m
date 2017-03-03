@@ -9,7 +9,7 @@ settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
 diemDataRoot = '\\cgm47\D\DIEM';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-VERSION = 'PCAmOFGBVS'; % TODO
+VERSION = 'PCAmOFGBVS_moredata'; % TODO
 
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
