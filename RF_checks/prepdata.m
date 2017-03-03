@@ -72,11 +72,13 @@ function [ Xtrain, Ytrain ] = prepdata( total,trIdx,featureRoot,options)
         % normalize features    
         nfeat = size(feat, 1);
         tmpfeat = feat;
-        tmpfeat(~isfinite(feat))=0;
-        options.featureNormMean = mean(tmpfeat, 1);
-        feat = feat - repmat(options.featureNormMean, [nfeat, 1]);
-        options.featureNormStd = std(tmpfeat, 0, 1);
+        tmpfeat(~isfinite(feat))=nan;
+        tmpfeat(tmpfeat==0)=nan;
+        options.featureNormMean = nanmean(tmpfeat, 1);
+        feat = tmpfeat - repmat(options.featureNormMean, [nfeat, 1]);
+        options.featureNormStd = nanstd(tmpfeat, 0, 1);
         feat = feat ./ (repmat(options.featureNormStd, [nfeat, 1])+eps());
+        %feat=tmpfeat;
     end
     
     Ytrain = [posL; negL];

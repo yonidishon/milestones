@@ -17,7 +17,8 @@ smlthan = bsxfun(@ge,candRad',D);
 if size(smlthan,1) > 1
     cand_weight = sum(smlthan);
 elseif any(smlthan)
-    cand_weight = smlthan;
+    [~,idx]=max(smlthan);
+    cand_weight = smlthan(idx)==smlthan;
 else
     cand_weight = ones(1,length(candRad));
 end
