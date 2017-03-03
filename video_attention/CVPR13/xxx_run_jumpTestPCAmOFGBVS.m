@@ -17,7 +17,7 @@ visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', VERSION); %TOD
 % modelFile = fullfile(uncVideoRoot, '00_trained_model_validation_v5_3.mat'); % validation
 
 modelFile = fullfile('\\cgm47\Users\ydishon\Documents\milestones\RF_checks\1000Inf2NaNYesfeatNormX_57148_allsrc_moredata_inp39.mat'); %TODO
-
+origmodelFile = fullfile(modelfeaturesaveloc,sprintf('00_trained_model_v5_3_no_sem_%s.mat','PCAmOFGBVS_allsrc_moredata'));
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
@@ -66,30 +66,10 @@ nv = length(videos);
 % load model
 s = load(modelFile);
 rf = s.bags{2};
-options.useCenter = 2; % 0 - none, 1 - always, 2 - only if no close
-options.humanTh = 1;
-options.humanMinSzRat = 0.3; % filter human smaller that this of maximum
-options.humanMinSz = 0.15; % filter human smaller that this of frame height
-options.humanMidSz = 0.4; % below this size (X height) create one candidate
-options.humanTrackRat = 0.7; % tracks with ration of human bounding box
-options.candCovScale = 1;
-options.motionScales = [0, 2, 4]; % point, 5x5, 9x9 windows
-options.saliencyScales = [0, 2, 4]; % point, 5x5, 9x9 windows
-options.contrastScales = [2, 4, 8]; % 5x5, 9x9, 17x17 windows
-options.sigmaScale = 0.5;
-options.nSample = 10; % number of source samples
-options.posPer = 0.03; % upper persentage for source sampling, rect
-options.negPer = 0.3; % lower threshold for source sampling
-options.motionTh = 2; % optical flow below this not used
-options.topCandsNum = 5;
-options.topCandsUse = 5; % number of tracked candidates
-options.minTrackSize = 20; % minimum size of the side of tracking rectangle
-% pairwize jump features
-options.useLabel = false; % true if the label of feature should be calculated
-options.distType = 'euc';
-options.gazeThreshold = 0.2; % distance to gaze within it the candidate concidered as good (Euclidian)
-options.rectSzTh = 0; % minimal size for gaze candidate
-options.featureIdx =1:(23+9*2); %1:23; % cvpr13_v5_3 %TODO - VERIFY -
+clear s;
+s = load(origmodelFile);
+options=s.options;
+options.useLabel=false;
 clear s;
 
 nt = length(testSubset);
