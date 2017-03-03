@@ -4,7 +4,7 @@
 % First guess:
 addpath(fullfile('C:\Users\ydishon\Documents\milestones\video_attention\CVPR13','xxx_my_additions'));
 settings()
-saveloc = '\\cgm47\D\Dima_Analysis_Milestones\Candidates\PrefectPredExp';
+saveloc = '\\cgm47\D\Dima_Analysis_Milestones\Candidates\PrefectPredExp2';
 diemDataRoot = '\\cgm47\D\DIEM';
 
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
