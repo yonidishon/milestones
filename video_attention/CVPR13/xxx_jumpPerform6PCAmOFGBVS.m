@@ -72,8 +72,8 @@ else
     topsrc=srcCands;
 end
 % here we check if they are overlapping with already calculated dstCands
-dstpnts =cell2mat(cellfun(@(x)x.point',dstCands,'UniformOutput',false))';
-srcpnts =cell2mat(cellfun(@(x)x.point',topsrc,'UniformOutput',false))';
+dstpnts =cell2mat(cellfun(@(x)x.point,dstCands','UniformOutput',false));
+srcpnts =cell2mat(cellfun(@(x)x.point,topsrc,'UniformOutput',false));
 D = pdist2(srcpnts, dstpnts, 'euclidean');
 selidxsrc = min(D')>options.minTrackSize;
 selsrc=topsrc(selidxsrc);
