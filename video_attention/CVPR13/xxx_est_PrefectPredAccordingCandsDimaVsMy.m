@@ -33,6 +33,7 @@ isdirbool = cell2mat(extractfield(files,'isdir'));
 filenames = extractfield(files,'name');
 dirnames = filenames(isdirbool);
 dirnames = dirnames(~ismember(dirnames,{'.','..'}));
+dirnames=dirnames([1,5,7,12]);
 for kk=2:length(dirnames);
     visRoot = fullfile(saveloc,dirnames{kk});
     if ~exist('visRoot','dir')
