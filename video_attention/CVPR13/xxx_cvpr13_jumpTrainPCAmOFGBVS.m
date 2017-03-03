@@ -23,7 +23,7 @@ addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_salie
 settings();
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-VERSION = 'PCAmOFGBVS_moredata';
+VERSION = 'PCAmOFGBVS_destcand';
 diemDataRoot = '\\cgm47\D\DIEM';
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');

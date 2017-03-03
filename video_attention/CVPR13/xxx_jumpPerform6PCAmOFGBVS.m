@@ -63,6 +63,10 @@ maps = cat(3, (ofx.^2 + ofy.^2), dstFr.saliency,dstFr.pcam);
 dstCands = xxx_jumpCandidates3addPCAsPCAm(maps, options);
 nDst = length(dstCands);
 
+% here we add the top three source cands
+
+% here we check if they are overlapping with already calculated dstCands
+
 % features
 features = xxx_jumpPairwiseFeatures6PCAmOFGBVS(srcFr, srcCands, dstFr, dstCands, options, cache); % v6, cached
 % %TODO strange: nDst ~= size(features, 2)

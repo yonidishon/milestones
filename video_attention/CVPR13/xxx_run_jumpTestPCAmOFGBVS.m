@@ -9,13 +9,13 @@ settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
 diemDataRoot = '\\cgm47\D\DIEM';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-VERSION = 'PCAmOFGBVS_moredata'; % TODO
-
+VERSION = 'PCAmOFGBVS_destcand'; % TODO
+VERSION_FOR_model = 'PCAmOFGBVS';
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
 visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', VERSION); %TODO
 % modelFile = fullfile(uncVideoRoot, '00_trained_model_validation_v5_3.mat'); % validation
-modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_v5_3_no_sem_%s.mat',VERSION)); %TODO
+modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_v5_3_no_sem_%s.mat',VERSION_FOR_model)); %TODO
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
@@ -26,7 +26,7 @@ methods = {'proposed', 'self'};
 % cache settings
 cache.root = fullfile(diemDataRoot, 'cache');
 cache.frameRoot = fullfile(diemDataRoot, 'cache');
-cache.featureRoot = fullfileCreate(modelfeaturesaveloc, sprintf('00_features_v6%s',VERSION));
+cache.featureRoot = fullfileCreate(modelfeaturesaveloc, sprintf('00_features_v6%s',VERSION_FOR_model));
 cache.gazeRoot = fullfileCreate(cache.root, '00_gaze');
 cache.renew = false; % use in case the preprocessing mechanism updated
 cache.renewFeatures = true;%TODO % use in case the feature extraction is updated
