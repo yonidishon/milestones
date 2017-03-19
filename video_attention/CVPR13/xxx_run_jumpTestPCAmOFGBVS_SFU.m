@@ -27,7 +27,7 @@ methods = {'proposed', 'self'};
 cache.root = fullfile(diemDataRoot, 'cache');
 cache.frameRoot = fullfile(diemDataRoot, 'cache');
 cache.featureRoot = fullfileCreate(modelfeaturesaveloc, sprintf('00_features_v6%s',VERSION_FOR_model));
-cache.gazeRoot = fullfileCreate(cache.root, '00_gaze');
+cache.gazeRoot = '\\cgm47\D\Competition_Dataset\SFU\gaze';
 cache.renew = false; % use in case the preprocessing mechanism updated
 cache.renewFeatures = true;%TODO % use in case the feature extraction is updated
 cache.renewJumps = false; % recalculate the final result
@@ -52,8 +52,9 @@ colors = [1 0 0;
     0 1 1];
 
 %% prepare
-videos = videoListLoad(diemDataRoot, 'DIEM');
-videos = extractfield(dir(diemDataRoot,'avi'),'name');
+%videos = videoListLoad(diemDataRoot, 'DIEM');
+videos = extractfield(dir(fullfile(diemDataRoot,'DATA')),'name');
+videos = videos(3:end);
 nv = length(videos);
 
 % configure all detectors
@@ -65,7 +66,7 @@ rf = s.rf;
 options = s.options;
 options.useLabel = false; % no need in label while testing
 clear s;
-
+options.pcaloc = pcaloc;
 nt = length(testSubset);
 sim = cell(nt, 1);
 
