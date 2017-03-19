@@ -7,7 +7,7 @@
 addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\CVPR13','xxx_my_additions'));
 settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
-diemDataRoot = 'D:\Competition_Dataset\SFU';
+diemDataRoot = '\\cgm47\D\Competition_Dataset\SFU';
 pcaloc = '\\cgm47\D\head_pose_estimation\SFUPCApng176x144';
 VERSION = 'PCAmOFGBVS_destcand'; % TODO
 VERSION_FOR_model = 'PCAmOFGBVS';
