@@ -7,13 +7,13 @@
 addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\CVPR13','xxx_my_additions'));
 settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
-diemDataRoot = '\\cgm47\D\DIEM';
+diemDataRoot = '\\cgm47\D\Competition_Dataset\SFU';
 
 VERSION = 'NoCachedPartial'; % TODO
 
-uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
+uncVideoRoot = fullfile(diemDataRoot, 'avi');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
-visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', VERSION); %TODO
+visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM_SFU', VERSION); %TODO
 % modelFile = fullfile(uncVideoRoot, '00_trained_model_validation_v5_3.mat'); % validation
 modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_cached_v5_3_no_sem_%s.mat',VERSION)); %TODO
 
@@ -27,7 +27,7 @@ methods = {'proposed', 'self'};
 cache.root = fullfile(diemDataRoot, 'cache');
 cache.frameRoot = fullfile(diemDataRoot, 'cache');
 cache.featureRoot = fullfileCreate(modelfeaturesaveloc, sprintf('00_features_v6%s',VERSION));
-cache.gazeRoot = fullfileCreate(cache.root, '00_gaze');
+cache.gazeRoot = '\\cgm47\D\Competition_Dataset\SFU\gaze';
 cache.renew = false; % use in case the preprocessing mechanism updated
 cache.renewFeatures = true; %TODO % use in case the feature extraction is updated
 cache.renewJumps = false; % recalculate the final result
@@ -35,9 +35,8 @@ cache.renewJumps = false; % recalculate the final result
 % gaze settings
 gazeParam.pointSigma = 10;
 
-% training and testing settings
-testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
-
+%testing settings
+testIdx = 1:12;
 testSubset = 1:length(testIdx);
 %testSubset = [6,9,12,13]; % see cvpr13_jumpTestPERcUE.M
 % testSubset = 11:length(testIdx);
@@ -56,7 +55,8 @@ colors = [1 0 0;
     0 1 1];
 
 %% prepare
-videos = videoListLoad(diemDataRoot, 'DIEM');
+videos = extractfield(dir(fullfile(diemDataRoot,'DATA')),'name');
+videos = videos(3:end);
 nv = length(videos);
 
 % configure all detectors
@@ -80,7 +80,7 @@ if (~exist(visRoot, 'dir'))
 end
 
 %% test
-for i = 1:20 %TODO
+for i = 1:length(videos) %TODO
     iv = testIdx(testSubset(i));
     fprintf('Processing %s... ', videos{iv}); tic;
 %     

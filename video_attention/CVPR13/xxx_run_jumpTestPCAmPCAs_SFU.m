@@ -7,13 +7,13 @@
 addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\CVPR13','xxx_my_additions'));
 settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
-diemDataRoot = '\\cgm47\D\DIEM';
-pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
+diemDataRoot = '\\cgm47\D\Competition_Dataset\SFU';
+pcaloc = '\\cgm47\D\head_pose_estimation\SFUPCApng176x144';
 VERSION = 'PCAmPCAs'; % TODO
 
-uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
+uncVideoRoot = fullfile(diemDataRoot, 'avi');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
-visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', VERSION); %TODO
+visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM_SFU', VERSION); %TODO
 % modelFile = fullfile(uncVideoRoot, '00_trained_model_validation_v5_3.mat'); % validation
 modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_v5_3_no_sem_%s.mat',VERSION)); %TODO
 
@@ -27,7 +27,7 @@ methods = {'proposed', 'self'};
 cache.root = fullfile(diemDataRoot, 'cache');
 cache.frameRoot = fullfile(diemDataRoot, 'cache');
 cache.featureRoot = fullfileCreate(modelfeaturesaveloc, sprintf('00_features_v6%s',VERSION));
-cache.gazeRoot = fullfile(cache.root, '00_gaze');
+cache.gazeRoot = '\\cgm47\D\Competition_Dataset\SFU\gaze';
 cache.renew = false; % use in case the preprocessing mechanism updated
 cache.renewFeatures = true;%TODO % use in case the feature extraction is updated
 cache.renewJumps = false; % recalculate the final result
@@ -36,8 +36,7 @@ cache.renewJumps = false; % recalculate the final result
 gazeParam.pointSigma = 10;
 
 % training and testing settings
-testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
-
+testIdx = 1:12;
 testSubset = 1:length(testIdx);
 %testSubset = [6,9,12,13]; % see cvpr13_jumpTestPERcUE.M
 % testSubset = 11:length(testIdx);
@@ -56,7 +55,8 @@ colors = [1 0 0;
     0 1 1];
 
 %% prepare
-videos = videoListLoad(diemDataRoot, 'DIEM');
+videos = extractfield(dir(fullfile(diemDataRoot,'DATA')),'name');
+videos = videos(3:end);
 nv = length(videos);
 
 % configure all detectors
@@ -67,6 +67,7 @@ s = load(modelFile);
 rf = s.rf;
 options = s.options;
 options.useLabel = false; % no need in label while testing
+options.pcaloc = pcaloc;
 clear s;
 
 nt = length(testSubset);
@@ -100,7 +101,7 @@ for i = 1:20 %TODO
     param = struct('videoReader', vr);
     
     % load jump frames
-    [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType, 50, 30, videoLen - 30);
+    [jumpFrames, before, after] = jumpFramesLoad(diemDataRoot, iv, jumpType, 50, 1, videoLen - 1);
     nc = length(jumpFrames);
     
     % load gaze data

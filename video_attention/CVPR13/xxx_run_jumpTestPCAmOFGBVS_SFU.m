@@ -78,7 +78,7 @@ if (~exist(visRoot, 'dir'))
 end
 
 %% test
-for i = 1:20 %TODO
+for i = 1:length(videos) %TODO
     iv = testIdx(testSubset(i));
     fprintf('Time is:: %s, Processing %s... ',datestr(datetime('now')), videos{iv}); tic;
     

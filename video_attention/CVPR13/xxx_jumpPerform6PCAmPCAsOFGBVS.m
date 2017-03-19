@@ -37,7 +37,7 @@ function dstCands = xxx_jumpPerform6PCAmPCAsOFGBVS(vidname, srcCands, srcFrIdx, 
 nSrc = length(srcCands);
 srcPts = zeros(nSrc, 2);
 srcScore = zeros(nSrc, 1);
-pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
+%pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
 
 
 for ic = 1:nSrc
@@ -57,8 +57,8 @@ g1 = fspecial('gaussian', [51 51], 10);
 g2 = fspecial('gaussian', [51 51], 20);
 ofx = abs(imfilter(dstFr.ofx, g2, 'symmetric') - imfilter(dstFr.ofx, g1, 'symmetric'));
 ofy = abs(imfilter(dstFr.ofy, g2, 'symmetric') - imfilter(dstFr.ofy, g1, 'symmetric'));
-dstFr.pcam = im2double(imread(fullfile(pcaloc,vidname,sprintf('%06d_PCAm.png',dstFrIdx))));
-dstFr.pcas = im2double(imread(fullfile(pcaloc,vidname,sprintf('%06d_PCAs.png',dstFrIdx))));
+dstFr.pcam = im2double(imread(fullfile(options.pcaloc,vidname,sprintf('%06d_PCAm.png',dstFrIdx))));
+dstFr.pcas = im2double(imread(fullfile(options.pcaloc,vidname,sprintf('%06d_PCAs.png',dstFrIdx))));
 maps = cat(3, (ofx.^2 + ofy.^2), dstFr.saliency,dstFr.pcam, dstFr.pcas);
 dstCands = xxx_jumpCandidates3addPCAsPCAm(maps, options);
 nDst = length(dstCands);
