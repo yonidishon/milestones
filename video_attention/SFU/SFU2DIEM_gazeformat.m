@@ -1,5 +1,5 @@
 %SFU2DIEM gaze format
-
+clear all;close all;clc;
 DATAROOT = '\\cgm47\d\Competition_Dataset\SFU\DATA\';
 PNGROOT = 'D:\head_pose_estimation\SFUpng176x144';
 DIRS = dir(DATAROOT);
