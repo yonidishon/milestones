@@ -42,5 +42,5 @@ end
 % create a map of fixations
 fixMap1 = cell(FRMS_CNT,1);
 for frame=1:FRMS_CNT
-fixMap1{frame} = [fixations1(frame,1:numFix1(frame),1);fixations1(frame,1:numFix1(frame),2)];
+fixMap1{frame} = [fixations1(frame,1:numFix1(frame),2)',fixations1(frame,1:numFix1(frame),1)'];
 end
