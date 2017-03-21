@@ -50,7 +50,7 @@ end
 
 % preprocess frames
 srcFr = struct('index', srcFrIdx);
-dstFr = xxx_preprocessFramesPartial(param.videoReader, dstFrIdx, gbvsParam, ofParam, poseletModel, cache);
+dstFr = xxx_preprocessFramesPartial(param.videoReader, dstFrIdx, gbvsParam, ofParam, cache);
 
 % destination candidates
 dstFr.pcam = im2double(imread(fullfile(options.pcaloc,vidname,sprintf('%06d_PCAm.png',dstFrIdx))));
