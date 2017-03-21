@@ -50,7 +50,7 @@ end
 
 % preprocess frames
 srcFr = struct('index', srcFrIdx);
-dstFr = xxx_preprocessFramesPartial(param.videoReader, dstFrIdx, gbvsParam, ofParam, poseletModel, cache);
+dstFr = xxx_preprocessFramesPartial(param.videoReader, dstFrIdx, gbvsParam, ofParam, cache);
 
 % destination candidates
 g1 = fspecial('gaussian', [51 51], 10);
