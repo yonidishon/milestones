@@ -55,6 +55,10 @@ if (isfield(gaze, 'binaryMaps') && isfield(gaze, 'index') && iscell(gaze.points)
     if (isfield(gaze, 'selfSimilarity'))
         gz.selfSimilarity = gaze.selfSimilarity(:,gaze.index);
     end
+elseif (isfield(gaze, 'index') && iscell(gaze.points))
+        gz.points = gaze.points{gaze.index};
+        gazePts = gz.points(~isnan(gz.points(:,1)), :);
+        gz.denseMap = points2GaussMap(gazePts', ones(1, size(gazePts, 1)), 0, [n, m], gaze.pointSigma);
 else
     gz = gaze;
     gazePts = gz.points(~isnan(gz.points(:,1)), :);
