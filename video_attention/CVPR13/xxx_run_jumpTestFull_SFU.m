@@ -9,13 +9,13 @@ settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
 diemDataRoot = '\\cgm47\D\Competition_Dataset\SFU';
 
-VERSION = 'NoCachedPartial'; % TODO
+VERSION = 'NoCachedFull'; % TODO
 
 uncVideoRoot = fullfile(diemDataRoot, 'avi');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
 visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM_SFU', VERSION); %TODO
 % modelFile = fullfile(uncVideoRoot, '00_trained_model_validation_v5_3.mat'); % validation
-modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_cached_v5_3_no_sem_%s.mat',VERSION)); %TODO
+modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_cvpr13_v5_3.mat')); %TODO
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
@@ -144,13 +144,13 @@ for i = 1:length(videos) %TODO
                     if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
                         srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
                     else
-                        srcCands = xxx_sourceCandidatesForTrainDimtry([], predMaps(:,:,ic-1), options, sourceType);
+                        srcCands = sourceCandidates([], predMaps(:,:,ic-1), options, sourceType);
                     end
                 else
                     error('Unsupported jump from type: %s', jumpFromType);
                 end
                 
-                dstCands = xxx_jumpPerform6Partial(srcCands, jumpFrames(ic)+before, jumpFrames(ic)+after, param, options, gbvsParam, ofParam, rf,cache); %TODO
+                dstCands = jumpPerform6(srcCands, jumpFrames(ic)+before, jumpFrames(ic)+after, param, options, gbvsParam, ofParam,poseletModel, rf,cache); %TODO
                 predMaps(:,:,ic) = candidate2map(dstCands, [n, m], candScale);
                 cands{ic} = dstCands;
             end
