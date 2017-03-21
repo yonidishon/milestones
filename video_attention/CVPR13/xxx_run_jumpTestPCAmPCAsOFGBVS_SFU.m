@@ -108,6 +108,7 @@ for i = 1:length(videos) %TODO
     s = load(fullfile(cache.gazeRoot, sprintf('%s.mat', videos{iv})));
     gazeData = s.data;
     clear s;
+    gazeData.pointSigma = gazeParam.pointSigma;
 
     gazeParam.gazeData = gazeData.points;
 
