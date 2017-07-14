@@ -68,7 +68,7 @@ s = load(modelFile);
 rf = s.rf;
 options = s.options;
 options.useLabel = false; % no need in label while testing
-optoins.pcaloc=pcaloc;
+options.pcaloc=pcaloc;
 clear s;
 
 nt = length(testSubset);
