@@ -50,7 +50,10 @@ end
 
 % preprocess frames
 srcFr = struct('index', srcFrIdx);
-dstFr = preprocessFrames(param.videoReader, dstFrIdx, gbvsParam, ofParam, cache);
+dstFr = preprocessFrames(param.videoReader, dstFrIdx, gbvsParam, ofParam,poseletModel, cache);
+if ~isempty(dstFr.faces) && dstFr.faces(1)==-1
+    dstFr.faces ={};
+end
 
 % destination candidates
 g1 = fspecial('gaussian', [51 51], 10);
@@ -60,7 +63,8 @@ ofy = abs(imfilter(dstFr.ofy, g2, 'symmetric') - imfilter(dstFr.ofy, g1, 'symmet
 dstFr.pcam = im2double(imread(fullfile(options.pcaloc,vidname,sprintf('%06d_PCAm.png',dstFrIdx))));
 
 maps = cat(3, (ofx.^2 + ofy.^2), dstFr.saliency,dstFr.pcam);
-dstCands = xxx_jumpCandidates3addAllPCAsPCAm(fr.faces,fr.poselets,maps, options);
+
+dstCands = xxx_jumpCandidates3addAllPCAsPCAm(dstFr.faces,dstFr.poselet_hit,maps, options);
 nDst = length(dstCands);
 
 % here we add the top three source cands
@@ -78,6 +82,9 @@ D = pdist2(srcpnts, dstpnts, 'euclidean');
 selidxsrc = min(D')>options.minTrackSize;
 selsrc=topsrc(selidxsrc);
 if ~isempty(selsrc);
+    if size(selsrc,1)>1
+        selsrc = selsrc';
+    end
     dstCands=[dstCands,selsrc];
 end
 

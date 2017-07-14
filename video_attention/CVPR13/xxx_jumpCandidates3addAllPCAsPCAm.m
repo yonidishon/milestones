@@ -38,26 +38,30 @@ candI = 1;
 
 % faces
 if (exist('faces', 'var') && ~isempty(faces))
-    n = size(faces, 1);
-    bbs = bbNms([faces(:,1:4), faces(:,6), ones(n, 1)], 'type', 'ms');
+    if faces(1)==-1
+        faces={};
+    else
+        n = size(faces, 1);
+        bbs = bbNms([faces(:,1:4), faces(:,6), ones(n, 1)], 'type', 'ms');
     
-    for ic = 1:n
-        xx = max(1, bbs(ic, 1));
-        yy = max(1, bbs(ic, 2));
-        sig = (min(bbs(ic, 3:4)) / 8)^2;
-        ww = min(max(bbs(ic, 3), options.minTrackSize), w - xx);
-        hh = min(max(bbs(ic, 4), options.minTrackSize), h - yy);
-%         sig = (ww / 8)^2;
-        
-        cands{candI}.point = [xx+ww/2, yy+hh/2];
-        cands{candI}.type = 2;
-        cands{candI}.score = bbs(ic, 5);
-        cands{candI}.cov = [sig, 0; 0, sig];
-        cands{candI}.candCov = [sig, 0; 0, sig];
-        cands{candI}.trackRect = round(bbApply('resize', [xx, yy, ww, hh], options.humanTrackRat, options.humanTrackRat));
-        cands{candI}.rect = round([xx, yy, ww, hh]);
-        
-        candI = candI + 1;
+        for ic = 1:n
+            xx = max(1, bbs(ic, 1));
+            yy = max(1, bbs(ic, 2));
+            sig = (min(bbs(ic, 3:4)) / 8)^2;
+            ww = min(max(bbs(ic, 3), options.minTrackSize), w - xx);
+            hh = min(max(bbs(ic, 4), options.minTrackSize), h - yy);
+            %         sig = (ww / 8)^2;
+            
+            cands{candI}.point = [xx+ww/2, yy+hh/2];
+            cands{candI}.type = 2;
+            cands{candI}.score = bbs(ic, 5);
+            cands{candI}.cov = [sig, 0; 0, sig];
+            cands{candI}.candCov = [sig, 0; 0, sig];
+            cands{candI}.trackRect = round(bbApply('resize', [xx, yy, ww, hh], options.humanTrackRat, options.humanTrackRat));
+            cands{candI}.rect = round([xx, yy, ww, hh]);
+            
+            candI = candI + 1;
+        end
     end
 end
 

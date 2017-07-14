@@ -29,7 +29,7 @@ function [features, distances, labels, jumps] = xxx_jumpPairwiseFeatures6All_Pm(
 %   jumps       array of jumps, [nsrc * ndst X 6], where each row is a
 %               jump: [src_x, src_y, dst_x, dst_y, dst_type, label]
 
-fvMax = 28;%23;%22
+fvMax = 25;%23;%22
 
 if (exist('cache', 'var'))
     cacheD = fullfileCreate(cache.featureRoot, dstFr.videoName);

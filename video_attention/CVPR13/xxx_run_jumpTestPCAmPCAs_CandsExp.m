@@ -1,19 +1,20 @@
 % run_jumpTest
+% Testing variable candidates (10 and 16) according to Lihi & Ayellet
+% E-mail 12/07/2017
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % VERSIONS
 % v6 - trained for CVPR, using cvpr13_v5_3 model
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% settings
-addpath(fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\CVPR13','xxx_my_additions'));
+addpath(fullfile('C:\Users\ydishon\Documents\milestones\video_attention\CVPR13','xxx_my_additions'));
 settings()
 modelfeaturesaveloc = '\\cgm47\D\Dima_Analysis_Milestones\ModelsFeatures'; %TODO
 diemDataRoot = '\\cgm47\D\DIEM';
 pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-VERSION = 'FullCachedCands_Pm+T'; % TODO
+VERSION = 'PCAmPCAs'; % TODO
 
 uncVideoRoot = fullfile(diemDataRoot, 'video_unc');
 gazeDataRoot = fullfile(diemDataRoot, 'gaze');
-visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', VERSION); %TODO
 % modelFile = fullfile(uncVideoRoot, '00_trained_model_validation_v5_3.mat'); % validation
 modelFile = fullfile(modelfeaturesaveloc, sprintf('00_trained_model_v5_3_no_sem_%s.mat',VERSION)); %TODO
 
@@ -67,7 +68,6 @@ s = load(modelFile);
 rf = s.rf;
 options = s.options;
 options.useLabel = false; % no need in label while testing
-options.pcaloc = pcaloc;
 clear s;
 
 nt = length(testSubset);
@@ -75,6 +75,9 @@ sim = cell(nt, 1);
 
 vers = version('-release');
 verNum = str2double(vers(1:4));
+for mycands=[10,16]
+options.topCandsNum = mycands;
+visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', [VERSION,sprintf('Cands_%d',mycands)]); %TODO
 
 if (~exist(visRoot, 'dir'))
     mkdir(visRoot);
@@ -134,7 +137,7 @@ for i = 1:20 %TODO
                     srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
                 elseif (strcmp(jumpFromType, 'gaze')) % jump from gaze map
                     srcGazeMap = points2GaussMap(gazeParam.gazeData{jumpFrames(ic)+before}', ones(1, size(gazeParam.gazeData{jumpFrames(ic)+before}, 1)), 0, [n, m], gazeParam.pointSigma);
-                    [srcCands, ~, ~, ~] = xxx_sourceCandidatesFull_Pm([], srcGazeMap, options, sourceType);
+                    [srcCands, ~, ~, ~] = xxx_sourceCandidatesMy([], srcGazeMap, options, sourceType);
                 elseif (strcmp(jumpFromType, 'prev-cand')) % jump from previous candidate set
                     if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
                         srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
@@ -145,13 +148,13 @@ for i = 1:20 %TODO
                     if (ic == 1 || isempty(cands{ic-1})) % first or empty previous
                         srcCands = {struct('point', [n/2, m/2], 'score', 1, 'type', 1, 'candCov', [(m/8)^2, 0; 0, (m/8)^2])}; % dummy source at center
                     else
-                        [srcCands, ~, ~, ~] = xxx_sourceCandidatesFull_Pm([],  predMaps(:,:,ic-1), options, sourceType);
+                        [srcCands, ~, ~, ~] = xxx_sourceCandidatesMy([],  predMaps(:,:,ic-1), options, sourceType);
                     end
                 else
                     error('Unsupported jump from type: %s', jumpFromType);
                 end
                 
-                dstCands = xxx_jumpPerform6All_PmT(videos{iv},srcCands, jumpFrames(ic)+before, jumpFrames(ic)+after, param, options, gbvsParam, ofParam, poseletModel, rf,cache); %TODO
+                dstCands = xxx_jumpPerform6PCAmPCAs(videos{iv},srcCands, jumpFrames(ic)+before, jumpFrames(ic)+after, param, options, gbvsParam, ofParam, poseletModel, rf,cache); %TODO
                 predMaps(:,:,ic) = candidate2map(dstCands, [n, m], candScale);
                 cands{ic} = dstCands;
             end
@@ -239,3 +242,4 @@ end
 % histogram
 visCompareMethods(sim, methods, measures, videos, testIdx(testSubset), 'boxplot');
 fprintf('Finished to Evaluate on %s\n',datestr(datetime('now')));
+end

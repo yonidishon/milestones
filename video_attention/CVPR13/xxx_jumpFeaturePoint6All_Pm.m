@@ -53,7 +53,7 @@ pt = round(cand.point);
 % preallocate
 %    3 + 2*3+3 = 3+6+3=12 % PCAsPCAm and addons
 %    3 + 3*3+3*3+3 = 3+9+9+3=24 %PCAsPCAmGBVSOF and addons
-nf = 3 + 3*length(options.motionScales) + 2*length(options.saliencyScales) + length(options.contrastScales);
+nf = 3 + 3*length(options.motionScales) + 2*length(options.saliencyScales) + length(options.contrastScales)+2;
 vec = zeros(nf, 1);
 
 curI = 1;
@@ -119,28 +119,36 @@ else
 end
 curI = curI + nsc;
 
-% PCAs
-nsc = length(options.saliencyScales);
-if (isempty(fr.pcas))
-    vec(curI:curI+nsc-1) = 0;
-else
-    for i = 1:nsc
-        ri = round(max(1, pt(2)-options.saliencyScales(i)):min(fr.height, pt(2)+options.saliencyScales(i)));
-        rj = round(max(1, pt(1)-options.saliencyScales(i)):min(fr.width, pt(1)+options.saliencyScales(i)));
-        vec(curI-1+i) = mean(mean(fr.pcas(ri, rj)));
-    end
-end
-curI = curI + nsc;
+% % PCAs
+% nsc = length(options.saliencyScales);
+% if (isempty(fr.pcas))
+%     vec(curI:curI+nsc-1) = 0;
+% else
+%     for i = 1:nsc
+%         ri = round(max(1, pt(2)-options.saliencyScales(i)):min(fr.height, pt(2)+options.saliencyScales(i)));
+%         rj = round(max(1, pt(1)-options.saliencyScales(i)):min(fr.width, pt(1)+options.saliencyScales(i)));
+%         vec(curI-1+i) = mean(mean(fr.pcas(ri, rj)));
+%     end
+% end
+% curI = curI + nsc;
 
 if (pt(1) >= 1 && pt(1) <= fr.width && pt(2) >= 1 && pt(2) <= fr.height) % if inside
     % score of face
-    p = rectDet2GaussMap(fr.faces(:,1:4), fr.faces(:, 6) ./ max(fr.faces(:, 6)), [fr.width, fr.height], options.sigmaScale);
-    vec(curI) = p(pt(2), pt(1));
+    if isempty(fr.faces)
+       vec(curI)=0;
+    else
+        p = rectDet2GaussMap(fr.faces(:,1:4), fr.faces(:, 6) ./ max(fr.faces(:, 6)), [fr.width, fr.height], options.sigmaScale);
+        vec(curI) = p(pt(2), pt(1));
+    end
     curI = curI + 1;
     
+    if isempty(fr.faces)
+        vec(curI)=0;
+    else
     % score of person
-    p = rectDet2GaussMap(double(fr.poselet_hit.bounds'), double(fr.poselet_hit.score(:)) ./ max(double(fr.poselet_hit.score(:))), [fr.width, fr.height], options.sigmaScale);
-    vec(curI) = p(pt(2), pt(1));
+        p = rectDet2GaussMap(double(fr.poselet_hit.bounds'), double(fr.poselet_hit.score(:)) ./ max(double(fr.poselet_hit.score(:))), [fr.width, fr.height], options.sigmaScale);
+        vec(curI) = p(pt(2), pt(1));
+    end
     curI = curI + 1;
 end
 
