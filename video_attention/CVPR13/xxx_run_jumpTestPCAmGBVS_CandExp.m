@@ -77,8 +77,8 @@ vers = version('-release');
 verNum = str2double(vers(1:4));
 
 for mycands = [10,16]
-visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', VERSION , [sprintf('Cands_%d',mycands)]); %TODO
-
+visRoot = fullfileCreate(modelfeaturesaveloc,'PredictionsNO_SEM', [VERSION , sprintf('Cands_%d',mycands)]); %TODO
+options.topCandsNum=mycands;
 if (~exist(visRoot, 'dir'))
     mkdir(visRoot);
 end
