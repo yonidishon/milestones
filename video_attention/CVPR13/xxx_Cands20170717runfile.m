@@ -1,0 +1,2 @@
+%run 'C:\Users\ydishon\Documents\milestones\video_attention\CVPR13\xxx_cvpr13_validateCands_OFGBVSCandsExp20170717.m';
+run 'C:\Users\ydishon\Documents\milestones\video_attention\CVPR13\xxx_cvpr13_validateCands_MyChSeperateCandsExp20170717.m';

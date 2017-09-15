@@ -69,15 +69,21 @@ for ii =1:length(titles) % run on each measure
     f_rate = figure('Name','Top Candidates Exp');
     hold on;
     colors = {'r','k','b','m','c','-k'};
+    fprintf('#####%s#####\n',titles{ii})
     for jj =1:length(exps) % plotting all exps
+        
         if ii==1
             plot((1:length(configs))',result_all{jj}(:,2)',sprintf('%s',colors{jj}),'LineWidth',2);
+            fprintf('%s:: %s\n',exps_str{jj},mat2str(result_all{jj}(:,2)));
         elseif ii==2
             plot((1:length(configs))',result_all{jj}(:,4)',sprintf('%s',colors{jj}),'LineWidth',2);
+            fprintf('%s:: %s\n',exps_str{jj},mat2str(result_all{jj}(:,4)));
         elseif ii==3
             plot((1:length(configs))',result_all{jj}(:,3)',sprintf('%s',colors{jj}),'LineWidth',2);
+            fprintf('%s:: %s\n',exps_str{jj},mat2str(result_all{jj}(:,3)));
         elseif ii==4
             plot((1:length(configs))',result_all{jj}(:,1)',sprintf('%s',colors{jj}),'LineWidth',2);
+            fprintf('%s:: %s\n',exps_str{jj},mat2str(result_all{jj}(:,1)));
    
         end
     end
