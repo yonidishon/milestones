@@ -276,7 +276,9 @@ if (~isempty(trainSubset))
     for i = 1:length(trIdx)
         iv = trIdx(i);
         fl = load(fullfile(cache.featureRoot, sprintf('%s.mat', videos{iv})));
-        fl.features = fl.features(options.featureIdx,:);
+        if ~isempty(fl.features)
+            fl.features = fl.features(options.featureIdx,:);
+        end
         posIdx = find(fl.labels == 1);
         negIdx = find(fl.labels == -1);
         
