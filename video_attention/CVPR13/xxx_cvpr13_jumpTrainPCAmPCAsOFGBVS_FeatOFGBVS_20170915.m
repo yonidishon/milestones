@@ -74,6 +74,7 @@ options.featureIdx = [1:13,20:26];
 % options.featureIdx = [1, 11:22]; % cvpr13_v5_3_no_mot
 % options.featureIdx = [2:13, 17:19, 21:22]; % cvpr13_v5_3_no_sem
 % options.featureIdx = 1:20; % cvpr13_v5_3_no_int
+options.pcaloc = pcaloc;
 
 % training
 options.rfType = 'class'; % 'class' for classification, 'reg' for pseudo-regression, 'reg-dist' for regression on distance
