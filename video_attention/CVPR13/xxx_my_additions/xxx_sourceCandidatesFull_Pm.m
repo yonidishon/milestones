@@ -66,7 +66,7 @@ else
                 posScore(ir) = sum(gzc(:)) / sum(gazeMap(:));
                 cands{ir}.point = posPts(ir, :);
                 cands{ir}.type = 6;
-                cands{ir}.cov = [(x2-x1)^2, 0; (y2-y1)^2, 0];
+                cands{ir}.cov = [(x2-x1)^2, 0; 0, (y2-y1)^2];
                 cands{ir}.candCov = cands{ir}.cov;
             end
             if (max(posScore) > 0)
