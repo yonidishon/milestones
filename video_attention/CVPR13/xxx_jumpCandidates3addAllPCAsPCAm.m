@@ -43,7 +43,7 @@ if (exist('faces', 'var') && ~isempty(faces))
     else
         n = size(faces, 1);
         bbs = bbNms([faces(:,1:4), faces(:,6), ones(n, 1)], 'type', 'ms');
-    
+        n = size(bbs, 1);
         for ic = 1:n
             xx = max(1, bbs(ic, 1));
             yy = max(1, bbs(ic, 2));

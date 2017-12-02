@@ -1,4 +1,4 @@
-function dstCands = xxx_jumpPerform6All_PmT(vidname, srcCands, srcFrIdx, dstFrIdx, param, options, gbvsParam, ofParam, poseletModel, rf, cache)
+function dstCands = x_jumpPerform6GBVSOF(srcCands, srcFrIdx, dstFrIdx, param, options, gbvsParam, ofParam, poseletModel, rf, cache)
 % Performs jump from source candidates to the destination ones. Destination
 % candidates are created using jumpCandidates. Both source and destination
 % frame are preprocessed using preprocessFrame, that supports caching.
@@ -37,8 +37,6 @@ function dstCands = xxx_jumpPerform6All_PmT(vidname, srcCands, srcFrIdx, dstFrId
 nSrc = length(srcCands);
 srcPts = zeros(nSrc, 2);
 srcScore = zeros(nSrc, 1);
-%pcaloc = '\\cgm47\D\head_pose_estimation\DIEMPCApng';
-
 
 for ic = 1:nSrc
     srcPts(ic, :) = srcCands{ic}.point;
@@ -50,51 +48,20 @@ end
 
 % preprocess frames
 srcFr = struct('index', srcFrIdx);
-dstFr = xxx_preprocessFrames_NoPQFTorAWD(param.videoReader, dstFrIdx, gbvsParam, ofParam,poseletModel, cache);
-if ~isempty(dstFr.faces) && dstFr.faces(1)==-1
-    dstFr.faces ={};
-end
+dstFr = x_preprocessFramesGBVSOF(param.videoReader, dstFrIdx, gbvsParam, ofParam, poseletModel);
 
 % destination candidates
-g1 = fspecial('gaussian', [51 51], 10);
-g2 = fspecial('gaussian', [51 51], 20);
-ofx = abs(imfilter(dstFr.ofx, g2, 'symmetric') - imfilter(dstFr.ofx, g1, 'symmetric'));
-ofy = abs(imfilter(dstFr.ofy, g2, 'symmetric') - imfilter(dstFr.ofy, g1, 'symmetric'));
-dstFr.pcam = im2double(imread(fullfile(options.pcaloc,vidname,sprintf('%06d_PCAm.png',dstFrIdx))));
-
-maps = cat(3, (ofx.^2 + ofy.^2), dstFr.saliency,dstFr.pcam);
-
-dstCands = xxx_jumpCandidates3addAllPCAsPCAm(dstFr.faces,dstFr.poselet_hit,maps, options);
+maps = cat(3, (dstFr.ofx.^2 + dstFr.ofy.^2), dstFr.saliency);
+dstCands = x_jumpCandidates([], [], maps, options);
 nDst = length(dstCands);
 
-% here we add the top three source cands
-if length(srcCands)>3
-srcCscores=cell2mat(cellfun(@(x)x.score,srcCands,'UniformOutput',false));
-[~,idx]=sort(srcCscores,'descend');
-    topsrc=srcCands(idx(1:3));
-else
-    topsrc=srcCands;
-end
-% here we check if they are overlapping with already calculated dstCands
-dstpnts =cell2mat(cellfun(@(x)x.point,dstCands','UniformOutput',false));
-srcpnts =cell2mat(cellfun(@(x)x.point,topsrc,'UniformOutput',false));
-D = pdist2(srcpnts, dstpnts, 'euclidean');
-selidxsrc = min(D')>options.minTrackSize;
-selsrc=topsrc(selidxsrc);
-if ~isempty(selsrc);
-    if size(selsrc,1)>1
-        selsrc = selsrc';
-    end
-    dstCands=[dstCands,selsrc];
-end
-
 % features
-features = xxx_jumpPairwiseFeatures6All_Pm(srcFr, srcCands, dstFr, dstCands, options, cache); % v6, cached
-% %TODO strange: nDst ~= size(features, 2)
-% if (nSrc == 1 && size(features, 2) ~= nDst)
-%     nDst = min(nDst, size(features, 2));
-%     dstCands = dstCands(1:nDst);
-% end
+features = x_jumpPairwiseFeatures6(srcFr, srcCands, dstFr, dstCands, options); % v6, cached
+%TODO strange: nDst ~= size(features, 2)
+if (nSrc == 1 && size(features, 2) ~= nDst)
+    nDst = min(nDst, size(features, 2));
+    dstCands = dstCands(1:nDst);
+end
 jumpProb = zeros(nSrc, nDst);
 lblHard = zeros(nSrc, nDst);
 

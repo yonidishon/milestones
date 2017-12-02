@@ -1,4 +1,4 @@
-function dstCands = xxx_jumpPerform6_DimaRecon(srcCands, srcFrIdx, dstFrIdx, param, options, gbvsParam, ofParam, poseletModel, rf, cache)
+function dstCands = jumpPerform6(srcCands, srcFrIdx, dstFrIdx, param, options, gbvsParam, ofParam, poseletModel, rf, cache)
 % Performs jump from source candidates to the destination ones. Destination
 % candidates are created using jumpCandidates. Both source and destination
 % frame are preprocessed using preprocessFrame, that supports caching.
